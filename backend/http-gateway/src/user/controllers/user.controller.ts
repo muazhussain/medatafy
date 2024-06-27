@@ -1,11 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../services/user.service';
 import { UpdateUserDto } from '../dtos/update-user.dto';
 import { commonResponse } from 'src/Utils/output-message-format';
 import { CreateUserDto } from '../dtos/create-user.dto';
+import { JwtGuard } from '../guards/jwt.guard';
 
 @ApiTags('User')
+@ApiBearerAuth()
 @Controller('user')
 export class UserController {
     constructor(
@@ -24,7 +26,8 @@ export class UserController {
     }
 
     @Get(':id')
-    async getUserById(@Param('id') id: string) {
+    @UseGuards(JwtGuard)
+    async getUserById(@Request() req: any, @Param('id') id: string) {
         try {
             const res = await this.userService.getUserById(id);
             return commonResponse(true, 'User fetched successfully', res);

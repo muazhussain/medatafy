@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AccountStatus, AccountType, Gender, UserEntity, UserType } from '../entities/user.entity';
+import { AccountStatus, AccountType, UserEntity } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../schemas/user.schema';
@@ -10,12 +10,22 @@ import * as bcrypt from 'bcrypt';
 import { plainToClass } from 'class-transformer';
 import { UserDto } from '../dtos/user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import { Redis } from 'ioredis';
+import { JwtService } from '@nestjs/jwt';
+import { ChangePasswordDto } from '../dtos/change-password.dto';
+import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
+import * as crypto from 'crypto';
+import { VerifyTokenDto } from '../dtos/verify-token.dto';
+import { ResetPasswordDto } from '../dtos/reset-password.dto';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
         @InjectModel(User.name) private readonly userModel: Model<User>,
+        @InjectRedis() private readonly redisService: Redis,
+        private readonly jwtService: JwtService,
     ) { }
 
     async createUser(payload: CreateUserDto): Promise<any> {
@@ -73,13 +83,14 @@ export class UserService {
         }
     }
 
-    async getUserById(id: string): Promise<User> {
+    async getUserById(id: string): Promise<any> {
         try {
             const isValid = mongoose.Types.ObjectId.isValid(id);
             if (!isValid) {
                 throw new HttpException('Invalid id', HttpStatus.BAD_REQUEST);
             }
-            return await this.userModel.findById(id);
+            const findUser = await this.userModel.findById(id);
+            return plainToClass(UserDto, findUser, { excludeExtraneousValues: true });
         } catch (error) {
             throw error;
         }
@@ -95,7 +106,7 @@ export class UserService {
 
     async updateUser(id: string, payload: UpdateUserDto): Promise<any> {
         try {
-            const findUser = await this.userRepository.findOneBy({ id: id });
+            const findUser = await this.userRepository.findOneBy({ mongoRef: id });
             if (!findUser) {
                 throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
             }
@@ -130,10 +141,10 @@ export class UserService {
             findUser.image = payload.image ?? findUser.image;
             findUser.accountStatus = payload.accountStatus ?? findUser.accountStatus;
             findUser.accountType = payload.accountType ?? findUser.accountType;
-            await this.userRepository.update({ id: id }, findUser);
+            await this.userRepository.update({ id: findUser.id }, findUser);
 
             // update on mongo
-            const user = await this.userModel.findOneAndUpdate({ _id: findUser.mongoRef }, {
+            const user = await this.userModel.findOneAndUpdate({ _id: id }, {
                 name: payload.name ?? findUser.name,
                 email: payload.email ?? findUser.email,
                 gender: payload.gender ?? findUser.gender,
@@ -144,7 +155,7 @@ export class UserService {
                 accountType: payload.accountType ?? findUser.accountType,
             });
 
-            return plainToClass(UserDto, findUser, { excludeExtraneousValues: true });
+            return plainToClass(UserDto, user, { excludeExtraneousValues: true });
         } catch (error) {
             throw error;
         }
@@ -158,6 +169,150 @@ export class UserService {
             }
             await this.userModel.findByIdAndDelete(findUser.mongoRef);
             return await this.userRepository.softDelete({ id: id });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async validateUser(email: string, password: string): Promise<any> {
+        try {
+            const findUser = await this.userModel.findOne({ email: email });
+            if (!findUser) {
+                throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+            }
+            const isMatch = await bcrypt.compare(password, findUser.password);
+            if (!isMatch) {
+                throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
+            }
+            return findUser;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async login(req: any): Promise<any> {
+        try {
+            const accessToken = this.jwtService.sign(
+                {
+                    userId: req.user._id.toString(),
+                    email: req.user.email,
+                    userAgent: req.headers['user-agent'],
+                    tokenType: 'access',
+                },
+                {
+                    expiresIn: '1h',
+                },
+            );
+            const refreshToken = this.jwtService.sign(
+                {
+                    userId: req.user._id.toString(),
+                    email: req.user.email,
+                    userAgent: req.headers['user-agent'],
+                    tokenType: 'refresh',
+                },
+                {
+                    expiresIn: '3d',
+                },
+            );
+            await this.redisService.set(req.user._id, refreshToken, 'EX', 60 * 60 * 24 * 3);
+            return {
+                userId: req.user._id.toString(),
+                email: req.user.email,
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async createAccessToken(refreshToken: string): Promise<any> {
+        try {
+            const decode = this.jwtService.decode(refreshToken);
+            const refreshTokenKey = await this.redisService.get(decode['userId']);
+            if (refreshTokenKey != refreshToken) {
+                throw new HttpException('Unauthorized access', HttpStatus.UNAUTHORIZED);
+            }
+            return this.jwtService.sign(
+                {
+                    userId: decode['userId'],
+                    email: decode['email'],
+                    userAgent: decode['userAgent'],
+                    tokenType: 'access',
+                },
+                {
+                    expiresIn: '1h',
+                },
+            );
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async changePassword(id: string, payload: ChangePasswordDto): Promise<any> {
+        try {
+            const isValid = mongoose.Types.ObjectId.isValid(id);
+            if (!isValid) {
+                throw new HttpException('Invalid id', HttpStatus.BAD_REQUEST);
+            }
+            const findUser = await this.userRepository.findOneBy({ mongoRef: id });
+            if (!findUser) {
+                throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+            }
+            const isMatch = await bcrypt.compare(payload.oldPassword, findUser.password);
+            if (!isMatch) {
+                throw new HttpException('Old password is incorrect', HttpStatus.BAD_REQUEST);
+            }
+            findUser.password = await bcrypt.hash(payload.newPassword, 10);
+            await this.userModel.findByIdAndUpdate({ _id: id }, { password: findUser.password });
+            return await this.userRepository.update({ id: findUser.id }, findUser);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async resetPassword(payload: ResetPasswordDto): Promise<any> {
+        try {
+            const isValid = mongoose.Types.ObjectId.isValid(payload.id);
+            if (!isValid) {
+                throw new HttpException('Invalid id', HttpStatus.BAD_REQUEST);
+            }
+            const findUser = await this.userRepository.findOneBy({ mongoRef: payload.id });
+            if (!findUser) {
+                throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+            }
+            findUser.password = await bcrypt.hash(payload.password, 10);
+            await this.userModel.findByIdAndUpdate({ _id: payload.id }, { password: findUser.password });
+            return await this.userRepository.update({ id: findUser.id }, findUser);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async forgotPassword(payload: ForgotPasswordDto): Promise<any> {
+        try {
+            const findUser = await this.userModel.findOne({ email: payload.email });
+            if (!findUser) {
+                throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+            }
+            const token = crypto.randomBytes(4).toString('hex').toUpperCase();
+            await this.redisService.set(`reset: ${token}`, findUser._id.toString(), 'EX', 60 * 2);
+
+            // send email
+
+            return token;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async verifyToken(payload: VerifyTokenDto): Promise<any> {
+        try {
+            const userId = await this.redisService.get(`${payload.type}: ${payload.token}`);
+            if (!userId) {
+                throw new HttpException('Invalid or expired token', HttpStatus.BAD_REQUEST);
+            }
+            return userId;
         } catch (error) {
             throw error;
         }

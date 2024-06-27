@@ -6,6 +6,12 @@ import { UserEntity } from './entities/user.entity';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/user.schema';
 import { AuthController } from './controllers/auth.controller';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { RedisModule } from '@nestjs-modules/ioredis';
+import { LocalStrategy } from './strategies/local.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { RefreshStrategy } from './strategies/refresh.strategy';
 
 @Module({
   imports: [
@@ -18,11 +24,27 @@ import { AuthController } from './controllers/auth.controller';
         schema: UserSchema,
       },
     ]),
+    PassportModule,
+    JwtModule.register({
+      // secret: process.env.JWT_SECRET,
+      secret: '1234',
+      signOptions: { expiresIn: '1d' },
+    }),
+    RedisModule.forRoot({
+      url: 'redis://localhost:6379',
+      type: 'single',
+      options: {},
+    }),
   ],
   controllers: [
     AuthController,
     UserController,
   ],
-  providers: [UserService]
+  providers: [
+    UserService,
+    LocalStrategy,
+    JwtStrategy,
+    RefreshStrategy,
+  ],
 })
 export class UserModule { }
