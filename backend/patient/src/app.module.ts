@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
-import { TestModule } from './test/test.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { NatsClientModule } from './nats-client/nats-client.module';
+import { MedicalReportModule } from './medical-report/medical-report.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    TestModule,
+    NatsClientModule,
+    MedicalReportModule,
   ],
   controllers: [],
   providers: [],
