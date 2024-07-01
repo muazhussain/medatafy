@@ -1,6 +1,6 @@
 import { Controller, Inject } from '@nestjs/common';
 import { MedicalReportService } from '../services/medical-report.service';
-import { ClientProxy, EventPattern } from '@nestjs/microservices';
+import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
 import { CreateMedicalReportDto } from '../dtos/create-medical-reprot.dto';
 import { GetAllMedicalReportDto } from '../dtos/get-all-medical-report.dto';
 import { UpdateMedicalReportDto } from '../dtos/update-medical-report.dto';
@@ -13,7 +13,7 @@ export class MedicalReportController {
     ) { }
 
     @EventPattern('createMedicalReport')
-    async createMedicalReport(payload: CreateMedicalReportDto) {
+    async createMedicalReport(@Payload() payload: CreateMedicalReportDto) {
         try {
             const res = await this.medicalReportService.createMedicalReport(payload);
             if (res) {
@@ -26,7 +26,7 @@ export class MedicalReportController {
     }
 
     @EventPattern('getMedicalReportById')
-    async getMedicalReportById(id: string) {
+    async getMedicalReportById(@Payload() id: string) {
         try {
             const res = await this.medicalReportService.getMedicalReportById(id);
             if (res) {
@@ -39,7 +39,7 @@ export class MedicalReportController {
     }
 
     @EventPattern('getAllMedicalReport')
-    async getAllMedicalReport(payload: GetAllMedicalReportDto) {
+    async getAllMedicalReport(@Payload() payload: GetAllMedicalReportDto) {
         try {
             const res = await this.medicalReportService.getAllMedicalReport(payload);
             if (res) {
@@ -52,9 +52,10 @@ export class MedicalReportController {
     }
 
     @EventPattern('updateMedicalReport')
-    async updateMedicalReport(id: string, payload: UpdateMedicalReportDto) {
+    async updateMedicalReport(@Payload() payload: { id: string, data: UpdateMedicalReportDto }) {
         try {
-            const res = await this.medicalReportService.updateMedicalReport(id, payload);
+            const { id, data } = payload;
+            const res = await this.medicalReportService.updateMedicalReport(id, data);
             if (res) {
                 this.natsClient.emit('updateMedicalReport', res);
             }
@@ -65,7 +66,7 @@ export class MedicalReportController {
     }
 
     @EventPattern('deleteMedicalReport')
-    async deleteMedicalReport(id: string) {
+    async deleteMedicalReport(@Payload() id: string) {
         try {
             const res = await this.medicalReportService.deleteMedicalReport(id);
             if (res) {
