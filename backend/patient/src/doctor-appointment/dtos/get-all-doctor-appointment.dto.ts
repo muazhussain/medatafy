@@ -1,7 +1,7 @@
 import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, isNumber } from "class-validator";
-import { AppointmentStatus } from "../entities/appointment.entity";
+import { DoctorAppointmentStatus } from "../entities/doctor-appointment.entity";
 
-export class GetAllAppointmentDto {
+export class GetAllDoctorAppointmentDto {
     @IsNumber()
     take: number;
 
@@ -15,7 +15,7 @@ export class GetAllAppointmentDto {
     @IsOptional()
     @IsString()
     @IsNotEmpty()
-    status?: AppointmentStatus;
+    status?: DoctorAppointmentStatus;
 
     @IsOptional()
     @IsUUID()

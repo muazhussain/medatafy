@@ -1,37 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AppointmentEntity } from '../entities/appointment.entity';
+import { DoctorAppointmentEntity } from '../entities/doctor-appointment.entity';
 import { DeleteResult, Repository } from 'typeorm';
-import { CreateAppointmentDto } from '../dtos/create-appointment.dto';
-import { GetAllAppointmentDto } from '../dtos/get-all-appointment.dto';
-import { UpdateAppointmentDto } from '../dtos/update-appointment.dto';
+import { CreateDoctorAppointmentDto } from '../dtos/create-doctor-appointment.dto';
+import { GetAllDoctorAppointmentDto } from '../dtos/get-all-doctor-appointment.dto';
+import { UpdateDoctorAppointmentDto } from '../dtos/update-doctor-appointment.dto';
 
 @Injectable()
-export class AppointmentService {
+export class DoctorAppointmentService {
     constructor(
-        @InjectRepository(AppointmentEntity) private appointmentRepository: Repository<AppointmentEntity>,
+        @InjectRepository(DoctorAppointmentEntity) private doctorAppointmentRepository: Repository<DoctorAppointmentEntity>,
     ) { }
 
-    async createAppointment(payload: CreateAppointmentDto): Promise<AppointmentEntity> {
+    async createDoctorAppointment(payload: CreateDoctorAppointmentDto): Promise<DoctorAppointmentEntity> {
         try {
             if (payload.status != 'pending' && payload.status != 'completed' && payload.status != 'cancelled') {
                 throw new Error('Invalid status');
             }
-            const newAppointment = this.appointmentRepository.create({
+            const newAppointment = this.doctorAppointmentRepository.create({
                 appointmentTime: payload.appointmentTime,
                 status: payload.status,
                 patient: payload.patient as any,
                 doctor: payload.doctor as any,
             });
-            return await this.appointmentRepository.save(newAppointment);
+            return await this.doctorAppointmentRepository.save(newAppointment);
         } catch (error) {
             throw error;
         }
     }
 
-    async getAppointmentById(id: string): Promise<AppointmentEntity> {
+    async getDoctorAppointmentById(id: string): Promise<DoctorAppointmentEntity> {
         try {
-            return await this.appointmentRepository.findOne({
+            return await this.doctorAppointmentRepository.findOne({
                 where: { id },
                 relations: {
                     patient: true,
@@ -43,12 +43,12 @@ export class AppointmentService {
         }
     }
 
-    async getAllAppointment(payload: GetAllAppointmentDto): Promise<AppointmentEntity[]> {
+    async getAllDoctorAppointment(payload: GetAllDoctorAppointmentDto): Promise<DoctorAppointmentEntity[]> {
         try {
             if (payload.status != 'pending' && payload.status != 'completed' && payload.status != 'cancelled') {
                 throw new Error('Invalid status');
             }
-            return await this.appointmentRepository.find({
+            return await this.doctorAppointmentRepository.find({
                 where: {
                     appointmentTime: payload.date,
                     status: payload.status,
@@ -71,9 +71,9 @@ export class AppointmentService {
         }
     }
 
-    async updateAppointment(id: string, payload: UpdateAppointmentDto): Promise<AppointmentEntity> {
+    async updateDoctorAppointment(id: string, payload: UpdateDoctorAppointmentDto): Promise<DoctorAppointmentEntity> {
         try {
-            const findAppointment = await this.getAppointmentById(id);
+            const findAppointment = await this.getDoctorAppointmentById(id);
             if (!findAppointment) {
                 throw new Error('Appointment not found');
             }
@@ -85,20 +85,20 @@ export class AppointmentService {
             if (doctor) {
                 findAppointment.doctor = doctor as any;
             }
-            await this.appointmentRepository.update({ id }, findAppointment);
-            return await this.getAppointmentById(id);
+            await this.doctorAppointmentRepository.update({ id }, findAppointment);
+            return await this.getDoctorAppointmentById(id);
         } catch (error) {
             throw error;
         }
     }
 
-    async deleteAppointment(id: string): Promise<DeleteResult> {
+    async deleteDoctorAppointment(id: string): Promise<DeleteResult> {
         try {
-            const findAppointment = await this.getAppointmentById(id);
+            const findAppointment = await this.getDoctorAppointmentById(id);
             if (!findAppointment) {
                 throw new Error('Appointment not found');
             }
-            return await this.appointmentRepository.softDelete({ id });
+            return await this.doctorAppointmentRepository.softDelete({ id });
         } catch (error) {
             throw error;
         }

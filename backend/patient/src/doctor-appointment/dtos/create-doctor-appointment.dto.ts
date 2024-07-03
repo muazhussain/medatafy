@@ -1,13 +1,13 @@
 import { IsDate, IsNotEmpty, IsString, IsUUID } from "class-validator";
-import { AppointmentStatus } from "../entities/appointment.entity";
+import { DoctorAppointmentStatus } from "../entities/doctor-appointment.entity";
 
-export class CreateAppointmentDto {
+export class CreateDoctorAppointmentDto {
     @IsDate()
     appointmentTime: Date;
 
     @IsString()
     @IsNotEmpty()
-    status: AppointmentStatus;
+    status: DoctorAppointmentStatus;
 
     @IsUUID()
     patient: string;
