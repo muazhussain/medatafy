@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HospitalModule } from './hospital/hospital.module';
 import { MedicalTestModule as MedicalTestModule } from './medical-test/medical-test.module';
 import { NatsClientModule } from './nats-client/nats-client.module';
+import { MedicalReportModule } from './medical-report/medical-report.module';
+import { HospitalAppointmentModule } from './hospital-appointment/hospital-appointment.module';
 
 @Module({
   imports: [
@@ -17,7 +19,9 @@ import { NatsClientModule } from './nats-client/nats-client.module';
     }),
     HospitalModule,
     MedicalTestModule,
+    MedicalReportModule,
     NatsClientModule,
+    HospitalAppointmentModule,
   ],
   controllers: [],
   providers: [],
