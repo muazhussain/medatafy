@@ -1,13 +1,17 @@
-import { IsNotEmpty, IsNumber, IsString, IsUUID } from "class-validator";
-import { MedicalTestType } from "../entities/medical-test.entity";
+import { IsEnum, IsNotEmpty, IsNumber, IsString, IsUUID } from "class-validator";
 
-export class CreateTestDto {
+enum MedicalTestType {
+    LAB = 'lab',
+    IMAGING = 'imaging',
+    OTHER = 'other',
+}
+
+export class CreateMedicalTestDto {
     @IsString()
     @IsNotEmpty()
     testName: string;
 
-    @IsString()
-    @IsNotEmpty()
+    @IsEnum(MedicalTestType, { message: 'Invalid test type' })
     testType: MedicalTestType;
 
     @IsNumber()

@@ -1,9 +1,10 @@
 import { Controller, Inject } from '@nestjs/common';
 import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
 import { MedicalTestService } from '../services/medical-test.service';
-import { CreateTestDto } from '../dtos/create-medical-test.dto';
-import { GetAllTestDto } from '../dtos/get-all-medical-test.dto';
+import { CreateMedicalTestDto } from '../dtos/create-medical-test.dto';
+import { GetAllMedicalTestDto } from '../dtos/get-all-medical-test.dto';
 import { UpdateMedicalTestDto } from '../dtos/update-medical-test.dto';
+import { commonResponse } from 'src/utils/output-message-format';
 
 @Controller()
 export class MedicalTestController {
@@ -13,14 +14,13 @@ export class MedicalTestController {
     ) { }
 
     @EventPattern('createMedicalTest')
-    async createMedicalTest(@Payload() payload: CreateTestDto) {
+    async createMedicalTest(@Payload() payload: CreateMedicalTestDto) {
         try {
             const res = await this.medicalTestService.createMedicalTest(payload);
-            if (res) {
-                this.natsClient.emit('createMedicalTest', res);
-            }
+            return commonResponse(true, 'Medical test created successfully', res);
         } catch (error) {
-            throw error;
+            console.error(error);
+            return commonResponse(false, 'Medical test creation failed', error);
         }
     }
 
@@ -28,23 +28,21 @@ export class MedicalTestController {
     async getMedicalTestById(@Payload() payload: string) {
         try {
             const res = await this.medicalTestService.getMedicalTestById(payload);
-            if (res) {
-                this.natsClient.emit('getMedicalTestById', res);
-            }
+            return commonResponse(true, 'Medical test fetched successfully', res);
         } catch (error) {
-            throw error;
+            console.error(error);
+            return commonResponse(false, 'Medical test fetch failed', error);
         }
     }
 
     @EventPattern('getAllMedicalTest')
-    async getAllMedicalTest(@Payload() payload: GetAllTestDto) {
+    async getAllMedicalTest(@Payload() payload: GetAllMedicalTestDto) {
         try {
             const res = await this.medicalTestService.getAllMedicalTest(payload);
-            if (res) {
-                this.natsClient.emit('getAllMedicalTest', res);
-            }
+            return commonResponse(true, 'Medical test fetched successfully', res);
         } catch (error) {
-            throw error;
+            console.error(error);
+            return commonResponse(false, 'Medical test fetch failed', error);
         }
     }
 
@@ -53,11 +51,10 @@ export class MedicalTestController {
         try {
             const { id, data } = payload;
             const res = await this.medicalTestService.updateMedicalTest(id, data);
-            if (res) {
-                this.natsClient.emit('updateMedicalTest', res);
-            }
+            return commonResponse(true, 'Medical test updated successfully', res);
         } catch (error) {
-            throw error;
+            console.error(error);
+            return commonResponse(false, 'Medical test update failed', error);
         }
     }
 
@@ -65,11 +62,10 @@ export class MedicalTestController {
     async deleteMedicalTest(@Payload() id: string) {
         try {
             const res = await this.medicalTestService.deleteMedicalTest(id);
-            if (res) {
-                this.natsClient.emit('deleteMedicalTest', res);
-            }
+            return commonResponse(true, 'Medical test deleted successfully', res);
         } catch (error) {
-            throw error;
+            console.error(error);
+            return commonResponse(false, 'Medical test delete failed', error);
         }
     }
 }
