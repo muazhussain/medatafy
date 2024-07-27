@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { NatsClientModule } from './nats-client/nats-client.module';
+import { DoctorAppointmentModule } from './doctor-appointment/doctor-appointment.module';
+import { DoctorModule } from './doctor/doctor.module';
+import { PrescriptionModule } from './prescription/prescription.module';
 
 @Module({
   imports: [
@@ -12,6 +16,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    NatsClientModule,
+    DoctorAppointmentModule,
+    DoctorModule,
+    PrescriptionModule,
   ],
   controllers: [],
   providers: [],
