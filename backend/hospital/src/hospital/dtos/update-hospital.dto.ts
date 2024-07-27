@@ -1,47 +1,43 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class UpdateHospitalDto {
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    name: string;
+    name?: string;
 
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    address: string;
+    address?: string;
 
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    phone: string;
-
-    @IsEmail()
-    @IsOptional()
-    email: string;
+    phone?: string;
 
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    description: string;
+    description?: string;
 
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    image: string;
+    image?: string;
 
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    website: string;
+    website?: string;
 
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    bin: string;
+    bin?: string;
 
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    tin: string;
+    tin?: string;
 }

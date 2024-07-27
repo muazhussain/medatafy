@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HospitalEntity } from '../entities/hospital.entity';
 import { CreateHospitalDto } from '../dtos/create-hospital.dto';
 import { UpdateHospitalDto } from '../dtos/update-hospital.dto';
-import { DeleteResult, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { GetAllHospitalDto } from '../dtos/get-all-hospital.dto';
+import AppDataSource from 'src/data-source';
 
 @Injectable()
 export class HospitalService {
@@ -13,11 +14,19 @@ export class HospitalService {
     ) { }
 
     async createHospital(payload: CreateHospitalDto): Promise<HospitalEntity> {
+        let queryrunner = AppDataSource.createQueryRunner();
+        await queryrunner.connect();
+        await queryrunner.startTransaction();
         try {
             const newHospital = this.hospitalRepository.create(payload);
-            return await this.hospitalRepository.save(newHospital);
+            const hospital = await queryrunner.manager.save(this.hospitalRepository.metadata.target, newHospital);
+            await queryrunner.commitTransaction();
+            return this.getHospitalById(hospital.id);
         } catch (error) {
+            await queryrunner.rollbackTransaction();
             throw error;
+        } finally {
+            await queryrunner.release();
         }
     }
 
@@ -27,9 +36,12 @@ export class HospitalService {
                 where: {
                     id: id,
                 },
+                relations: {
+                    user: true,
+                },
             });
             if (!findHospital) {
-                throw new Error('Hospital not found');
+                throw new HttpException('Hospital not found', HttpStatus.NOT_FOUND);
             }
             return findHospital;
         } catch (error) {
@@ -40,6 +52,10 @@ export class HospitalService {
     async getAllHospital(payload: GetAllHospitalDto): Promise<HospitalEntity[]> {
         try {
             return await this.hospitalRepository.find({
+                where: {
+                    name: payload.name,
+                    address: payload.address,
+                },
                 order: {
                     createdAt: 'DESC',
                 },
@@ -52,21 +68,47 @@ export class HospitalService {
     }
 
     async updateHospital(id: string, payload: UpdateHospitalDto): Promise<HospitalEntity> {
+        let queryrunner = AppDataSource.createQueryRunner();
+        await queryrunner.connect();
+        await queryrunner.startTransaction();
         try {
-            const hospital = await this.getHospitalById(id);
-            Object.assign(hospital, payload);
-            await this.hospitalRepository.update({ id }, hospital);
-            return hospital;
+            const findHospital = await this.getHospitalById(id);
+            if (!findHospital) {
+                throw new HttpException('Hospital not found', HttpStatus.NOT_FOUND);
+            }
+            Object.assign(findHospital, payload);
+            await queryrunner.manager.update(this.hospitalRepository.metadata.target, { id: id }, findHospital);
+            await queryrunner.commitTransaction();
+            return findHospital;
         } catch (error) {
+            await queryrunner.commitTransaction();
             throw error;
+        } finally {
+            await queryrunner.release();
         }
     }
 
-    async deleteHospital(id: string): Promise<DeleteResult> {
-        try {
-            return await this.hospitalRepository.softDelete({ id });
-        } catch (error) {
-            throw error;
-        }
-    }
+    // async deleteHospital(id: string): Promise<any> {
+    //     let queryrunner = AppDataSource.createQueryRunner();
+    //     await queryrunner.connect();
+    //     await queryrunner.startTransaction();
+    //     try {
+    //         const findHospital = this.hospitalRepository.findOne({
+    //             where: {
+    //                 id: id,
+    //             },
+    //         });
+    //         if (!findHospital) {
+    //             throw new HttpException('Hospital not found', HttpStatus.NOT_FOUND);
+    //         }
+    //         await queryrunner.manager.softDelete(this.hospitalRepository.metadata.target, { id: id });
+    //         await queryrunner.commitTransaction();
+    //         return findHospital;
+    //     } catch (error) {
+    //         await queryrunner.rollbackTransaction();
+    //         throw error;
+    //     } finally {
+    //         await queryrunner.release();
+    //     }
+    // }
 }

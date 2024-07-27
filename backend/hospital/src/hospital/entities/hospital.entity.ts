@@ -1,6 +1,9 @@
-import { CommonEntity } from "src/Utils/common.entity";
+import { CommonEntity } from "src/utils/common.entity";
 import { MedicalTestEntity } from "src/medical-test/entities/medical-test.entity";
-import { Column, Entity, OneToMany } from "typeorm";
+import { Column, Entity, OneToMany, OneToOne } from "typeorm";
+import { UserEntity } from "src/other-entities/user.entity";
+import { HospitalAppointmentEntity } from "src/other-entities/hospital-appointment.entity";
+import { MedicalReportEntity } from "src/other-entities/medical-report.entity";
 
 @Entity('hospital')
 export class HospitalEntity extends CommonEntity {
@@ -12,9 +15,6 @@ export class HospitalEntity extends CommonEntity {
 
     @Column()
     phone: string;
-
-    @Column()
-    email: string;
 
     @Column()
     description: string;
@@ -31,6 +31,15 @@ export class HospitalEntity extends CommonEntity {
     @Column()
     tin: string;
 
-    @OneToMany(() => MedicalTestEntity, (test) => test.hospital)
-    tests: MedicalTestEntity[];
+    @OneToOne(() => UserEntity, (user) => user.hospital,)
+    user: UserEntity;
+
+    @OneToMany(() => MedicalTestEntity, (test) => test.hospital,)
+    medicalTests: MedicalTestEntity[];
+
+    @OneToMany(() => MedicalReportEntity, (report) => report.hospital,)
+    medicalReports: MedicalReportEntity[];
+
+    @OneToMany(() => HospitalAppointmentEntity, (appointment) => appointment.hospital,)
+    hospitalAppointments: HospitalAppointmentEntity[];
 }

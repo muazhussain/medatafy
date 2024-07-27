@@ -1,4 +1,4 @@
-import { IsNumber } from "class-validator";
+import { IsNumber, IsOptional, IsString } from "class-validator";
 
 export class GetAllHospitalDto {
     @IsNumber()
@@ -6,4 +6,12 @@ export class GetAllHospitalDto {
 
     @IsNumber()
     page: number;
+
+    @IsString()
+    @IsOptional()
+    name?: string;
+
+    @IsString()
+    @IsOptional()
+    address?: string;
 }
