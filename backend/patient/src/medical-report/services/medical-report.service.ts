@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MedicalReportEntity } from '../entities/medical-report.entity';
-import { DeleteResult, Repository } from 'typeorm';
-import { CreateMedicalReportDto } from '../dtos/create-medical-reprot.dto';
+import { DeleteResult, In, Repository } from 'typeorm';
 import { GetAllMedicalReportDto } from '../dtos/get-all-medical-report.dto';
 import { UpdateMedicalReportDto } from '../dtos/update-medical-report.dto';
+import AppDataSource from 'src/data-source';
+import { CreateMedicalReportDto } from '../dtos/create-medical-reprot.dto';
 
 @Injectable()
 export class MedicalReportService {
@@ -13,6 +14,9 @@ export class MedicalReportService {
     ) { }
 
     async createMedicalReport(payload: CreateMedicalReportDto): Promise<MedicalReportEntity> {
+        let queryrunner = AppDataSource.createQueryRunner();
+        await queryrunner.connect();
+        await queryrunner.startTransaction();
         try {
             const newMedicalReport = this.medicalReportRepository.create({
                 issueDate: payload.issueDate,
@@ -24,16 +28,21 @@ export class MedicalReportService {
                 doctor: payload.doctor as any,
                 hospital: payload.hospital as any,
             });
-            return await this.medicalReportRepository.save(newMedicalReport);
+            const medicalReport = await queryrunner.manager.save(this.medicalReportRepository.metadata.target, newMedicalReport);
+            await queryrunner.commitTransaction();
+            return this.getMedicalReportById(medicalReport.id);
         } catch (error) {
+            await queryrunner.rollbackTransaction();
             throw error;
+        } finally {
+            await queryrunner.release();
         }
     }
 
     async getMedicalReportById(id: string): Promise<MedicalReportEntity> {
         try {
-            return await this.medicalReportRepository.findOne({
-                where: { id },
+            const findMedicalReport = await this.medicalReportRepository.findOne({
+                where: { id: id },
                 relations: {
                     medicalTest: true,
                     patient: true,
@@ -41,6 +50,10 @@ export class MedicalReportService {
                     hospital: true
                 },
             });
+            if (!findMedicalReport) {
+                throw new HttpException('Medical report not found', HttpStatus.NOT_FOUND);
+            }
+            return findMedicalReport;
         } catch (error) {
             throw error;
         }
@@ -51,16 +64,16 @@ export class MedicalReportService {
             return await this.medicalReportRepository.find({
                 where: {
                     medicalTest: {
-                        id: payload.medicalTest,
+                        id: In(payload.medicalTests),
                     },
                     patient: {
-                        id: payload.patient,
+                        id: In(payload.patients),
                     },
                     doctor: {
-                        id: payload.doctor,
+                        id: In(payload.doctors),
                     },
                     hospital: {
-                        id: payload.hospital,
+                        id: In(payload.hospitals),
                     },
                 },
                 relations: {
@@ -68,6 +81,9 @@ export class MedicalReportService {
                     patient: true,
                     doctor: true,
                     hospital: true
+                },
+                order: {
+                    createdAt: 'DESC',
                 },
                 take: Math.max(payload.take, 0),
                 skip: (Math.max(payload.page, 1) - 1) * Math.max(payload.take, 0),
@@ -78,10 +94,13 @@ export class MedicalReportService {
     }
 
     async updateMedicalReport(id: string, payload: UpdateMedicalReportDto): Promise<MedicalReportEntity> {
+        let queryrunner = AppDataSource.createQueryRunner();
+        await queryrunner.connect();
+        await queryrunner.startTransaction();
         try {
             const findMedicalReport = await this.getMedicalReportById(id);
             if (!findMedicalReport) {
-                throw new Error('Medical report not found');
+                throw new HttpException('Medical report not found', HttpStatus.NOT_FOUND);
             }
             const { medicalTest, doctor, hospital, ...data } = payload;
             Object.assign(findMedicalReport, data);
@@ -94,22 +113,34 @@ export class MedicalReportService {
             if (hospital) {
                 findMedicalReport.hospital = hospital as any;
             }
-            await this.medicalReportRepository.update({ id }, findMedicalReport);
+            await queryrunner.manager.update(this.medicalReportRepository.metadata.target, { id: id }, findMedicalReport);
+            await queryrunner.commitTransaction();
             return await this.getMedicalReportById(id);
         } catch (error) {
+            await queryrunner.rollbackTransaction();
             throw error;
+        } finally {
+            await queryrunner.release();
         }
     }
 
-    async deleteMedicalReport(id: string): Promise<DeleteResult> {
+    async deleteMedicalReport(id: string): Promise<any> {
+        let queryrunner = AppDataSource.createQueryRunner();
+        await queryrunner.connect();
+        await queryrunner.startTransaction();
         try {
             const findMedicalReport = await this.getMedicalReportById(id);
             if (!findMedicalReport) {
-                throw new Error('Medical report not found');
+                throw new HttpException('Medical report not found', HttpStatus.NOT_FOUND);
             }
-            return await this.medicalReportRepository.softDelete({ id });
+            await queryrunner.manager.softDelete(this.medicalReportRepository.metadata.target, { id: id });
+            await queryrunner.commitTransaction();
+            return findMedicalReport;
         } catch (error) {
+            await queryrunner.rollbackTransaction();
             throw error;
+        } finally {
+            await queryrunner.release();
         }
     }
 }

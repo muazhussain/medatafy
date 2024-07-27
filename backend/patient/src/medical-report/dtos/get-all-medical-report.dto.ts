@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsUUID } from "class-validator";
+import { IsArray, IsNumber, IsOptional, IsUUID, ValidateNested } from "class-validator";
 
 export class GetAllMedicalReportDto {
     @IsNumber()
@@ -7,19 +7,27 @@ export class GetAllMedicalReportDto {
     @IsNumber()
     take: number;
 
+    @ValidateNested({ each: true })
+    @IsArray()
+    @IsUUID('all', { each: true })
     @IsOptional()
-    @IsUUID()
-    medicalTest?: string;
+    medicalTests?: string[];
 
+    @ValidateNested({ each: true })
+    @IsArray()
+    @IsUUID('all', { each: true })
     @IsOptional()
-    @IsUUID()
-    patient?: string;
+    patients?: string[];
 
+    @ValidateNested({ each: true })
+    @IsArray()
+    @IsUUID('all', { each: true })
     @IsOptional()
-    @IsUUID()
-    doctor?: string;
+    doctors?: string[];
 
+    @ValidateNested({ each: true })
+    @IsArray()
+    @IsUUID('all', { each: true })
     @IsOptional()
-    @IsUUID()
-    hospital?: string;
+    hospitals?: string[];
 }

@@ -1,4 +1,4 @@
-import { CommonEntity } from "src/Utils/common.entity";
+import { CommonEntity } from "src/utils/common.entity";
 import { DoctorEntity } from "src/other-entities/doctor.entity";
 import { HospitalEntity } from "src/other-entities/hospital.entity";
 import { MedicalTestEntity } from "src/other-entities/medical-test.entity";
@@ -8,16 +8,15 @@ import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 @Entity('medical_report')
 export class MedicalReportEntity extends CommonEntity {
     @Column({
-        type: 'timestamptz',
-        nullable: true,
+        type: 'date',
     })
-    issueDate?: Date;
+    issueDate: string;
 
     @Column({
-        type: 'timestamptz',
+        type: 'date',
         nullable: true,
     })
-    deliveryDate?: Date;
+    deliveryDate?: string;
 
     @Column({
         nullable: true,

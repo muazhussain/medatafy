@@ -1,13 +1,13 @@
 import { IsDate, IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateMedicalReportDto {
-    @IsDate()
-    @IsOptional()
-    issueDate?: Date;
+    @IsString()
+    @IsNotEmpty()
+    issueDate: string;
 
-    @IsDate()
+    @IsString()
     @IsOptional()
-    deliveryDate?: Date;
+    deliveryDate?: string;
 
     @IsString()
     @IsNotEmpty()
