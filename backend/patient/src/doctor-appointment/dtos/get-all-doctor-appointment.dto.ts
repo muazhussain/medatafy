@@ -1,5 +1,11 @@
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, isNumber } from "class-validator";
-import { DoctorAppointmentStatus } from "../entities/doctor-appointment.entity";
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString, IsUUID, ValidateNested } from "class-validator";
+
+enum DoctorAppointmentStatus {
+    PENDING = 'pending',
+    COMPLETED = 'completed',
+    CANCELLED_BY_PATIENT = 'cancelled_by_patient',
+    CANCELLED_BY_DOCTOR = 'cancelled_by_doctor',
+}
 
 export class GetAllDoctorAppointmentDto {
     @IsNumber()
@@ -8,20 +14,27 @@ export class GetAllDoctorAppointmentDto {
     @IsNumber()
     page: number;
 
+    @ValidateNested({ each: true })
+    @IsArray()
+    @IsString({ each: true })
     @IsOptional()
-    @IsDate()
-    date?: Date;
+    dates?: string[];
 
+    @ValidateNested({ each: true })
+    @IsArray()
+    @IsEnum(DoctorAppointmentStatus, { each: true, message: 'Invalid status' })
     @IsOptional()
-    @IsString()
-    @IsNotEmpty()
-    status?: DoctorAppointmentStatus;
+    status?: DoctorAppointmentStatus[];
 
+    @ValidateNested({ each: true })
+    @IsArray()
+    @IsUUID('all', { each: true })
     @IsOptional()
-    @IsUUID()
-    patient?: string;
+    doctors?: string[];
 
+    @ValidateNested({ each: true })
+    @IsArray()
+    @IsUUID('all', { each: true })
     @IsOptional()
-    @IsUUID()
-    doctor?: string;
+    patients?: string[];
 }

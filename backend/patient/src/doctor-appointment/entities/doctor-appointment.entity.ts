@@ -1,20 +1,26 @@
-import { CommonEntity } from "src/Utils/common.entity";
+import { CommonEntity } from "src/utils/common.entity";
 import { DoctorEntity } from "src/other-entities/doctor.entity";
 import { PatientEntity } from "src/patient/entities/patient.entity";
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-export enum DoctorAppointmentStatus {
+enum DoctorAppointmentStatus {
     PENDING = 'pending',
     COMPLETED = 'completed',
-    CANCELLED = 'cancelled',
+    CANCELLED_BY_PATIENT = 'cancelled_by_patient',
+    CANCELLED_BY_DOCTOR = 'cancelled_by_doctor',
 }
 
 @Entity('doctor_appointment')
 export class DoctorAppointmentEntity extends CommonEntity {
     @Column({
-        type: 'timestamptz',
+        type: 'date',
     })
-    appointmentTime: Date;
+    date: string;
+
+    @Column({
+        type: 'time',
+    })
+    time: string;
 
     @Column({
         type: 'enum',
@@ -23,11 +29,11 @@ export class DoctorAppointmentEntity extends CommonEntity {
     })
     status: DoctorAppointmentStatus;
 
-    @ManyToOne(() => PatientEntity, (patient) => patient.appointments,)
+    @ManyToOne(() => PatientEntity, (patient) => patient.doctorAppointments,)
     @JoinColumn({ name: 'patient_id' })
     patient: PatientEntity;
 
-    @ManyToOne(() => DoctorEntity, (doctor) => doctor.appointments,)
+    @ManyToOne(() => DoctorEntity, (doctor) => doctor.doctorAppointments,)
     @JoinColumn({ name: 'doctor_id' })
     doctor: DoctorEntity;
 }

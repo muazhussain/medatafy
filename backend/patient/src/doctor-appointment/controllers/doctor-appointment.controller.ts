@@ -20,7 +20,6 @@ export class DoctorAppointmentController {
                 this.natsClient.emit('createDoctorAppointment', res);
             }
         } catch (error) {
-            console.log(error);
             throw error;
         }
     }
@@ -33,7 +32,6 @@ export class DoctorAppointmentController {
                 this.natsClient.emit('getDoctorAppointmentById', res);
             }
         } catch (error) {
-            console.log(error);
             throw error;
         }
     }
@@ -46,7 +44,6 @@ export class DoctorAppointmentController {
                 this.natsClient.emit('getAllDoctorAppointment', res);
             }
         } catch (error) {
-            console.log(error);
             throw error;
         }
     }
@@ -60,7 +57,6 @@ export class DoctorAppointmentController {
                 this.natsClient.emit('updateDoctorAppointment', res);
             }
         } catch (error) {
-            console.log(error);
             throw error;
         }
     }
@@ -73,7 +69,6 @@ export class DoctorAppointmentController {
                 this.natsClient.emit('deleteDoctorAppointment', res);
             }
         } catch (error) {
-            console.log(error);
             throw error;
         }
     }

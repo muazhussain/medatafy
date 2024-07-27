@@ -1,13 +1,24 @@
-import { IsDate, IsNotEmpty, IsString, IsUUID } from "class-validator";
-import { DoctorAppointmentStatus } from "../entities/doctor-appointment.entity";
+import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator";
+
+enum DoctorAppointmentStatus {
+    PENDING = 'pending',
+    COMPLETED = 'completed',
+    CANCELLED_BY_PATIENT = 'cancelled_by_patient',
+    CANCELLED_BY_DOCTOR = 'cancelled_by_doctor',
+}
 
 export class CreateDoctorAppointmentDto {
-    @IsDate()
-    appointmentTime: Date;
+    @IsString()
+    @IsNotEmpty()
+    date: string;
 
     @IsString()
     @IsNotEmpty()
-    status: DoctorAppointmentStatus;
+    time: string;
+
+    @IsEnum(DoctorAppointmentStatus, { message: 'Invalid status' })
+    @IsOptional()
+    status?: DoctorAppointmentStatus;
 
     @IsUUID()
     patient: string;
