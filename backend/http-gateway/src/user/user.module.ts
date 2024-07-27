@@ -12,11 +12,17 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
+import { DoctorEntity } from 'src/other-entities/doctor.entity';
+import { HospitalEntity } from 'src/other-entities/hostpital.entity';
+import { PatientEntity } from 'src/other-entities/patient.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       UserEntity,
+      DoctorEntity,
+      HospitalEntity,
+      PatientEntity,
     ]),
     MongooseModule.forFeature([
       {

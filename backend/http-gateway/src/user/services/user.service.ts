@@ -18,159 +18,243 @@ import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import * as crypto from 'crypto';
 import { VerifyTokenDto } from '../dtos/verify-token.dto';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
+import AppDataSource from 'src/data-source';
+import { DoctorEntity } from 'src/other-entities/doctor.entity';
+import { HospitalEntity } from 'src/other-entities/hostpital.entity';
+import { PatientEntity } from 'src/other-entities/patient.entity';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
+        @InjectRepository(DoctorEntity) private readonly doctorRepository: Repository<DoctorEntity>,
+        @InjectRepository(HospitalEntity) private readonly hospitalRepository: Repository<HospitalEntity>,
+        @InjectRepository(PatientEntity) private readonly patientRepository: Repository<PatientEntity>,
         @InjectModel(User.name) private readonly userModel: Model<User>,
         @InjectRedis() private readonly redisService: Redis,
         private readonly jwtService: JwtService,
     ) { }
 
     async createUser(payload: CreateUserDto): Promise<any> {
+        let queryrunner = AppDataSource.createQueryRunner();
+        await queryrunner.connect();
+        await queryrunner.startTransaction();
+        let savedUser: any;
         try {
-            let findUser = await this.userRepository.findOneBy({ email: payload.email });
+            let findUser = await this.userModel.findOne({
+                email: payload.email,
+                userType: payload.userType,
+            });
             if (findUser) {
                 throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
             }
-            findUser = await this.userRepository.findOneBy({ phone: payload.phone });
-            if (findUser) {
-                throw new HttpException('Phone number already exists', HttpStatus.BAD_REQUEST);
+
+            if (payload.userType === 'doctor' && payload.doctor === null) {
+                throw new HttpException('Doctor information is required', HttpStatus.BAD_REQUEST);
             }
 
-            if (payload.userType != 'patient' && payload.userType != 'doctor' && payload.userType != 'hospitalAdmin' && payload.userType != 'hospitalEmployee') {
-                throw new HttpException('Invalid user type', HttpStatus.BAD_REQUEST);
+            if (payload.userType === 'patient' && payload.patient === null) {
+                throw new HttpException('Patient information is required', HttpStatus.BAD_REQUEST);
             }
-            if (payload.gender != 'male' && payload.gender != 'female') {
-                throw new HttpException('Invalid gender', HttpStatus.BAD_REQUEST);
+
+            if (payload.userType === 'hospital' && payload.hospital === null) {
+                throw new HttpException('Hospital information is required', HttpStatus.BAD_REQUEST);
             }
 
             const hashedPassword = await bcrypt.hash(payload.password, 10);
             payload.password = hashedPassword;
-            const uniqueId = this.generateUniqueId(payload.name, payload.userType, payload.gender);
+
             const newUser = await this.userModel.create({
-                name: payload.name,
                 email: payload.email,
                 password: payload.password,
-                uniqueId: uniqueId,
-                gender: payload.gender,
-                phone: payload.phone,
-                dateOfBirth: payload.dateOfBirth,
-                image: payload.image,
-                accountType: AccountType.FREE,
-                accountStatus: AccountStatus.PENDING,
                 userType: payload.userType,
+                accountStatus: AccountStatus.PENDING,
+                accountType: AccountType.FREE,
             });
-            const savedUser = await newUser.save();
-            const user = await this.userRepository.save({
-                name: payload.name,
+            savedUser = await newUser.save();
+
+            const user = this.userRepository.create({
                 email: payload.email,
                 password: payload.password,
-                uniqueId: uniqueId,
-                gender: payload.gender,
-                phone: payload.phone,
-                dateOfBirth: payload.dateOfBirth,
-                image: payload.image,
-                accountType: AccountType.FREE,
-                accountStatus: AccountStatus.PENDING,
                 userType: payload.userType,
+                accountStatus: AccountStatus.PENDING,
+                accountType: AccountType.FREE,
                 mongoRef: savedUser._id.toString() as any,
             });
-            return plainToClass(UserDto, user, { excludeExtraneousValues: true });
+            const createdUser = await queryrunner.manager.save(this.userRepository.metadata.target, user);
+
+            if (payload.userType === 'doctor') {
+                const findUser = await this.doctorRepository.findOneBy({ phone: payload.doctor.phone });
+                if (findUser) {
+                    throw new HttpException('Phone number already exists', HttpStatus.BAD_REQUEST);
+                }
+                const doctor = this.doctorRepository.create({
+                    name: payload.doctor.name,
+                    gender: payload.doctor.gender,
+                    phone: payload.doctor.phone,
+                    dateOfBirth: payload.doctor.dateOfBirth,
+                    image: payload.doctor.image,
+                    address: payload.doctor.address,
+                    bmdcRegNo: payload.doctor.bmdcRegNo,
+                    speciality: payload.doctor.speciality,
+                    officeHours: payload.doctor.officeHours,
+                    user: createdUser,
+                });
+                await queryrunner.manager.save(this.doctorRepository.metadata.target, doctor);
+            } else if (payload.userType === 'patient') {
+                const findUser = await this.patientRepository.findOneBy({ phone: payload.patient.phone });
+                if (findUser) {
+                    throw new HttpException('Phone number already exists', HttpStatus.BAD_REQUEST);
+                }
+                const patient = this.patientRepository.create({
+                    name: payload.patient.name,
+                    gender: payload.patient.gender,
+                    phone: payload.patient.phone,
+                    dateOfBirth: payload.patient.dateOfBirth,
+                    image: payload.patient.image,
+                    address: payload.patient.address,
+                    user: createdUser,
+                });
+                await queryrunner.manager.save(this.patientRepository.metadata.target, patient);
+            } else if (payload.userType === 'hospital') {
+                const findUser = await this.hospitalRepository.findOneBy({ phone: payload.hospital.phone });
+                if (findUser) {
+                    throw new HttpException('Phone number already exists', HttpStatus.BAD_REQUEST);
+                }
+                const hospital = this.hospitalRepository.create({
+                    name: payload.hospital.name,
+                    address: payload.hospital.address,
+                    phone: payload.hospital.phone,
+                    image: payload.hospital.image,
+                    bin: payload.hospital.bin,
+                    tin: payload.hospital.tin,
+                    description: payload.hospital.description,
+                    website: payload.hospital.website,
+                    user: createdUser,
+                });
+                await queryrunner.manager.save(this.hospitalRepository.metadata.target, hospital);
+            }
+            await queryrunner.commitTransaction();
+            const data = await this.userRepository.findOne({
+                where: {
+                    id: createdUser.id,
+                },
+                relations: {
+                    doctor: payload.userType === 'doctor' ? true : false,
+                    patient: payload.userType === 'patient' ? true : false,
+                    hospital: payload.userType === 'hospital' ? true : false,
+                },
+            });
+            return plainToClass(UserDto, data, { excludeExtraneousValues: true });
         } catch (error) {
+            await this.userModel.deleteOne(savedUser);
+            await queryrunner.rollbackTransaction();
             throw error;
+        } finally {
+            await queryrunner.release();
         }
     }
 
     async getUserById(id: string): Promise<any> {
         try {
-            const isValid = mongoose.Types.ObjectId.isValid(id);
-            if (!isValid) {
-                throw new HttpException('Invalid id', HttpStatus.BAD_REQUEST);
+            const findUser = await this.userRepository.findOneBy({ id: id });
+            if (!findUser) {
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
             }
-            const findUser = await this.userModel.findById(id);
             return plainToClass(UserDto, findUser, { excludeExtraneousValues: true });
         } catch (error) {
             throw error;
         }
     }
 
-    async getUserByEmail(email: string): Promise<UserEntity> {
+    async getUserByEmail(email: string): Promise<any> {
         try {
-            return await this.userRepository.findOneBy({ email: email });
+            const findUser = await this.userRepository.findOneBy({ email: email });
+            if (!findUser) {
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+            }
+            if (!findUser) {
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+            }
+            return plainToClass(UserDto, findUser, { excludeExtraneousValues: true });
         } catch (error) {
             throw error;
         }
     }
 
     async updateUser(id: string, payload: UpdateUserDto): Promise<any> {
+        let queryrunner = AppDataSource.createQueryRunner();
+        await queryrunner.connect();
+        await queryrunner.startTransaction();
         try {
-            const findUser = await this.userRepository.findOneBy({ mongoRef: id });
+            const findUser = await this.userRepository.findOneBy({ id: id });
             if (!findUser) {
-                throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
-            }
-            if (payload.gender != null && payload.gender != 'male' && payload.gender != 'female') {
-                throw new HttpException('Invalid gender', HttpStatus.BAD_REQUEST);
-            }
-            if (payload.accountStatus != null && payload.accountStatus != 'pending' && payload.accountStatus != 'active' && payload.accountStatus != 'inactive') {
-                throw new HttpException('Invalid account status', HttpStatus.BAD_REQUEST);
-            }
-            if (payload.accountType != null && payload.accountType != 'free' && payload.accountType != 'premium') {
-                throw new HttpException('Invalid account type', HttpStatus.BAD_REQUEST);
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
             }
             if (payload.email != null && payload.email != findUser.email) {
-                const findUser = await this.userRepository.findOneBy({ email: payload.email });
+                const findUser = await this.userModel.findOne({ email: payload.email });
                 if (findUser) {
                     throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
                 }
             }
-            if (payload.phone != null && payload.phone != findUser.phone) {
-                const findUser = await this.userRepository.findOneBy({ phone: payload.phone });
-                if (findUser) {
-                    throw new HttpException('Phone number already exists', HttpStatus.BAD_REQUEST);
-                }
-            }
 
             // update on postgres
-            findUser.name = payload.name ?? findUser.name;
-            findUser.email = payload.email ?? findUser.email;
-            findUser.gender = payload.gender ?? findUser.gender;
-            findUser.phone = payload.phone ?? findUser.phone;
-            findUser.dateOfBirth = payload.dateOfBirth ?? findUser.dateOfBirth;
-            findUser.image = payload.image ?? findUser.image;
-            findUser.accountStatus = payload.accountStatus ?? findUser.accountStatus;
-            findUser.accountType = payload.accountType ?? findUser.accountType;
-            await this.userRepository.update({ id: findUser.id }, findUser);
+            const user = await this.userRepository.findOneBy({ id: id });
+            if (!user) {
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+            }
+            user.email = payload.email ?? user.email;
+            user.accountStatus = payload.accountStatus ?? user.accountStatus;
+            user.accountType = payload.accountType ?? user.accountType;
+            await queryrunner.manager.update(this.userRepository.metadata.target, { id: user.id }, user);
 
             // update on mongo
-            const user = await this.userModel.findOneAndUpdate({ _id: id }, {
-                name: payload.name ?? findUser.name,
-                email: payload.email ?? findUser.email,
-                gender: payload.gender ?? findUser.gender,
-                phone: payload.phone ?? findUser.phone,
-                dateOfBirth: payload.dateOfBirth ?? findUser.dateOfBirth,
-                image: payload.image ?? findUser.image,
-                accountStatus: payload.accountStatus ?? findUser.accountStatus,
-                accountType: payload.accountType ?? findUser.accountType,
+            const isValid = mongoose.Types.ObjectId.isValid(user.mongoRef);
+            if (!isValid) {
+                throw new HttpException('Invalid mongo id', HttpStatus.BAD_REQUEST);
+            }
+            await this.userModel.findOneAndUpdate({ _id: user.mongoRef }, {
+                email: payload.email ?? user.email,
+                accountStatus: payload.accountStatus ?? user.accountStatus,
+                accountType: payload.accountType ?? user.accountType,
             });
 
-            return plainToClass(UserDto, user, { excludeExtraneousValues: true });
+            await queryrunner.commitTransaction();
+            return user;
         } catch (error) {
+            await queryrunner.rollbackTransaction();
             throw error;
+        } finally {
+            await queryrunner.release();
         }
     }
 
     async deleteUser(id: string): Promise<any> {
+        let queryrunner = AppDataSource.createQueryRunner();
+        await queryrunner.connect();
+        await queryrunner.startTransaction();
         try {
-            const findUser = await this.userRepository.findOneBy({ id: id });
+            const user = await this.userRepository.findOneBy({ id: id });
+            if (!user) {
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+            }
+            await queryrunner.manager.softDelete(this.userRepository.metadata.target, { id: user.id });
+            const isValid = mongoose.Types.ObjectId.isValid(user.mongoRef);
+            if (!isValid) {
+                throw new HttpException('Invalid mongo id', HttpStatus.BAD_REQUEST);
+            }
+            const findUser = await this.userModel.findById(user.mongoRef);
             if (!findUser) {
                 throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
             }
-            await this.userModel.findByIdAndDelete(findUser.mongoRef);
-            return await this.userRepository.softDelete({ id: id });
+            await this.userModel.findByIdAndDelete({ _id: user.mongoRef });
+            await queryrunner.commitTransaction();
+            return plainToClass(UserDto, user, { excludeExtraneousValues: true });
         } catch (error) {
+            await queryrunner.rollbackTransaction();
             throw error;
+        } finally {
+            await queryrunner.release();
         }
     }
 
@@ -184,7 +268,7 @@ export class UserService {
             if (!isMatch) {
                 throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
             }
-            return findUser;
+            return plainToClass(UserDto, findUser, { excludeExtraneousValues: true });
         } catch (error) {
             throw error;
         }
@@ -272,20 +356,28 @@ export class UserService {
     }
 
     async resetPassword(payload: ResetPasswordDto): Promise<any> {
+        let queryrunner = AppDataSource.createQueryRunner();
+        await queryrunner.connect();
+        await queryrunner.startTransaction();
         try {
-            const isValid = mongoose.Types.ObjectId.isValid(payload.id);
-            if (!isValid) {
-                throw new HttpException('Invalid id', HttpStatus.BAD_REQUEST);
-            }
-            const findUser = await this.userRepository.findOneBy({ mongoRef: payload.id });
+            const findUser = await this.userRepository.findOneBy({ id: payload.id });
             if (!findUser) {
                 throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
             }
             findUser.password = await bcrypt.hash(payload.password, 10);
-            await this.userModel.findByIdAndUpdate({ _id: payload.id }, { password: findUser.password });
-            return await this.userRepository.update({ id: findUser.id }, findUser);
+            await queryrunner.manager.update(this.userRepository.metadata.target, { id: payload.id }, findUser);
+            const isValid = mongoose.Types.ObjectId.isValid(findUser.mongoRef);
+            if (!isValid) {
+                throw new HttpException('Invalid mongo id', HttpStatus.BAD_REQUEST);
+            }
+            await this.userModel.findByIdAndUpdate({ _id: findUser.mongoRef }, { password: findUser.password });
+            await queryrunner.commitTransaction();
+            return plainToClass(UserDto, findUser, { excludeExtraneousValues: true });
         } catch (error) {
+            await queryrunner.rollbackTransaction();
             throw error;
+        } finally {
+            await queryrunner.release();
         }
     }
 
@@ -293,7 +385,7 @@ export class UserService {
         try {
             const findUser = await this.userModel.findOne({ email: payload.email });
             if (!findUser) {
-                throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
             }
             const token = crypto.randomBytes(4).toString('hex').toUpperCase();
             await this.redisService.set(`reset: ${token}`, findUser._id.toString(), 'EX', 60 * 2);
@@ -330,17 +422,12 @@ export class UserService {
         return encoded || '0';
     }
 
-    private generateUniqueId(name: string, userType: string, gender: string): string {
+    private generateUniqueId(name: string, userType: string): string {
         const userPrefix = {
             patient: 'P',
             doctor: 'D',
             hospitalAdmin: 'H',
             hospitalEmployee: 'E'
-        };
-
-        const genderPrefix = {
-            male: 'M',
-            female: 'F'
         };
 
         const timestamp = this.encodeBase36();
@@ -350,7 +437,7 @@ export class UserService {
         const lastChar = name.charAt(name.length - 1).toUpperCase();
         const secondLastChar = name.charAt(name.length - 2).toUpperCase();
 
-        const uniqueId = `${userPrefix[userType]}${genderPrefix[gender]}${timestamp}${randomSuffix1}${randomSuffix2}${lastChar}${secondLastChar}`;
+        const uniqueId = `${userPrefix[userType]}${timestamp}${randomSuffix1}${randomSuffix2}${lastChar}${secondLastChar}`;
         return uniqueId;
     }
 }

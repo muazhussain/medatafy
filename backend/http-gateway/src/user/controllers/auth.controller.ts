@@ -3,7 +3,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { UserService } from "../services/user.service";
 import { LoginDto } from "../dtos/login.dto";
 import { LocalGuard } from "../guards/local.gurad";
-import { commonResponse } from "src/Utils/output-message-format";
+import { commonResponse } from "src/utils/output-message-format";
 import { RefreshGuard } from "../guards/refresh.guard";
 import { GetAccessTokenDto } from "../dtos/get-access-token.dto";
 import { ForgotPasswordDto } from "../dtos/forgot-password.dto";
@@ -24,7 +24,7 @@ export class AuthController {
             const res = await this.userService.login(req);
             return commonResponse(true, 'User logged in successfully', res);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return commonResponse(false, 'User login failed', error);
         }
     }
@@ -36,7 +36,7 @@ export class AuthController {
             const res = await this.userService.createAccessToken(payload.refreshToken);
             return commonResponse(true, 'Access token generated successfully', res);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return commonResponse(false, 'Access token generation failed', error);
         }
     }
@@ -47,7 +47,7 @@ export class AuthController {
             const res = await this.userService.forgotPassword(payload);
             return commonResponse(true, 'Password reset token sent successfully', res);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return commonResponse(false, 'Password reset token sending failed', error);
         }
     }
@@ -58,7 +58,7 @@ export class AuthController {
             const res = await this.userService.resetPassword(payload);
             return commonResponse(true, 'Password reset successfully', res);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return commonResponse(false, 'Password reset failed', error);
         }
     }
@@ -69,7 +69,7 @@ export class AuthController {
             const res = await this.userService.verifyToken(payload);
             return commonResponse(true, 'Token verified successfully', res);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return commonResponse(false, 'Token verification failed', error);
         }
     }

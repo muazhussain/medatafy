@@ -1,18 +1,203 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
-import { Gender, UserType } from "../entities/user.entity";
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength, ValidateNested } from "class-validator";
+import { UserType } from "../entities/user.entity";
 
-export class CreateUserDto {
+enum Gender {
+    MALE = 'male',
+    FEMALE = 'female',
+}
+
+class DoctorDto {
     @ApiProperty({
         required: true,
         type: 'string',
-        example: 'John Doe'
     })
     @IsString()
     @IsNotEmpty()
-    @MinLength(2)
     name: string;
 
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    bmdcRegNo: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'enum',
+        example: Gender,
+    })
+    @IsEnum(Gender, { message: 'Invalid gender' })
+    gender: Gender;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    phone: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    dateOfBirth: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    image: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    speciality: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    address: string;
+
+    @ApiProperty({
+        required: false,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    officeHours?: string;
+}
+
+class HospitalDto {
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    name: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    address: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    phone: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    description: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    image: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    website: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    bin: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    tin: string;
+}
+
+class PatientDto {
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    name: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'enum',
+        example: Gender,
+    })
+    @IsEnum(Gender, { message: 'Invalid gender' })
+    gender: Gender;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    phone: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    dateOfBirth: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    image: string;
+
+    @ApiProperty({
+        required: true,
+        type: 'string',
+    })
+    @IsString()
+    @IsNotEmpty()
+    address: string;
+}
+
+export class CreateUserDto {
     @ApiProperty({
         required: true,
         type: 'string',
@@ -34,43 +219,35 @@ export class CreateUserDto {
     @ApiProperty({
         required: true,
         type: 'enum',
-        example: Gender,
+        example: UserType,
     })
-    @IsString()
-    @IsNotEmpty()
-    gender: Gender;
-
-    @ApiProperty({
-        required: true,
-        type: 'string',
-        example: '12345678'
-    })
-    @IsString()
-    phone: string;
-
-    @ApiProperty({
-        required: true,
-        type: 'string',
-        example: 'YYYY-MM-DD'
-    })
-    @IsString()
-    dateOfBirth?: string;
+    @IsEnum(UserType, { message: 'Invalid user type' })
+    userType: UserType;
 
     @ApiProperty({
         required: false,
-        type: 'string',
-        example: 'image.png'
+        type: HospitalDto,
+        example: HospitalDto,
     })
-    @IsString()
+    @ValidateNested()
     @IsOptional()
-    image?: string;
+    hospital?: HospitalDto;
 
     @ApiProperty({
-        required: true,
-        type: 'enum',
-        example: UserType,
+        required: false,
+        type: DoctorDto,
+        example: DoctorDto,
     })
-    @IsString()
-    @IsNotEmpty()
-    userType: UserType;
+    @ValidateNested()
+    @IsOptional()
+    doctor?: DoctorDto;
+
+    @ApiProperty({
+        required: false,
+        type: PatientDto,
+        example: PatientDto,
+    })
+    @ValidateNested()
+    @IsOptional()
+    patient?: PatientDto;
 }
