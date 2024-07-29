@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrescriptionController } from './controllers/prescription.controller';
+import { PrescriptionMicroserviceController } from './controllers/prescription-microservice.controller';
 import { PrescriptionService } from './services/prescription.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PrescriptionEntity } from './entities/prescription.entity';
@@ -14,7 +14,7 @@ import { MedicalTestPrescriptionRelationEntity } from 'src/other-entities/medica
       MedicinePrescriptionRelationEntity,
     ]),
   ],
-  controllers: [PrescriptionController],
+  controllers: [PrescriptionMicroserviceController],
   providers: [PrescriptionService]
 })
 export class PrescriptionModule { }

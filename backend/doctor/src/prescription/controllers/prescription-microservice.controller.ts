@@ -7,7 +7,7 @@ import { UpdatePrescriptionDto } from '../dtos/update-prescription.dto';
 import { commonResponse } from 'src/utils/output-message-format';
 
 @Controller()
-export class PrescriptionController {
+export class PrescriptionMicroserviceController {
     constructor(
         private readonly prescriptionService: PrescriptionService,
     ) { }
