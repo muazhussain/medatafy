@@ -29,7 +29,9 @@ export class DoctorEntity extends CommonEntity {
     @Column()
     phone: string;
 
-    @Column()
+    @Column({
+        type: 'date',
+    })
     dateOfBirth: string;
 
     @Column()
