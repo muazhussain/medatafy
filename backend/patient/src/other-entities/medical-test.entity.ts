@@ -4,7 +4,7 @@ import { MedicalReportEntity } from "src/medical-report/entities/medical-report.
 import { MedicalTestPrescriptionRelationEntity } from "./medical-test-prescription-relation.entity";
 import { HospitalEntity } from "./hospital.entity";
 
-export enum MedicalTestType {
+enum MedicalTestType {
     LAB = 'lab',
     IMAGING = 'imaging',
     OTHER = 'other',

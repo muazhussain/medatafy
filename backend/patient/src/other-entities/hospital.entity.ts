@@ -34,7 +34,7 @@ export class HospitalEntity extends CommonEntity {
     @OneToOne(() => UserEntity, (user) => user.hospital,)
     user: UserEntity;
 
-    @OneToMany(() => MedicalTestEntity, (medicalTest) => medicalTest.hospital,)
+    @OneToMany(() => MedicalTestEntity, (test) => test.hospital,)
     medicalTests: MedicalTestEntity[];
 
     @OneToMany(() => MedicalReportEntity, (report) => report.hospital,)
