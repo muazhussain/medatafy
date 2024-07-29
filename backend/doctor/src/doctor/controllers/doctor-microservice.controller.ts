@@ -11,17 +11,11 @@ export class DoctorMicroserviceController {
         private readonly doctorService: DoctorService,
     ) { }
 
-    @MessagePattern({ cmd: 'createHello' })
-    createUser(@Payload() data: any) {
-        return { msg: 'hello' };
-    }
-
     @MessagePattern({ cmd: 'getDoctorById' })
     async getDoctorById(@Payload() id: string) {
         try {
-            console.log('here');
-            // const res = await this.doctorService.getDoctorById(id);
-            // return commonResponse(true, 'Get doctor successfully', res);
+            const res = await this.doctorService.getDoctorById(id);
+            return commonResponse(true, 'Get doctor successfully', res);
         } catch (error) {
             console.error(error);
             return commonResponse(false, 'Get doctor failed', error);

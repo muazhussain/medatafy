@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DoctorMicroserviceController } from './controllers/doctor.controller';
+import { DoctorMicroserviceController } from './controllers/doctor-microservice.controller';
 import { DoctorService } from './services/doctor.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DoctorEntity } from './entities/doctor.entity';
