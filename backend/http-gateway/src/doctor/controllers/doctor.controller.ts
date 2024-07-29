@@ -11,11 +11,6 @@ export class DoctorController {
         @Inject('NATS_SERVICE') private natsClient: ClientProxy,
     ) { }
 
-    @Post()
-    createHello() {
-        return this.natsClient.send({ cmd: 'createHello' }, '');
-    }
-
     @Get(':id')
     getDoctorById(@Param('id') id: string) {
         console.log(id);
