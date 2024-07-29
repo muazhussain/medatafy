@@ -1,0 +1,144 @@
+services:
+  http_gateway:
+    build:
+      context: ./backend/http-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend/http-gateway/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3000
+      - JWT_SECRET=F261D3DC7F1B3
+      - SWAGGER_TITLE=MEDATAFY API
+      - SWAGGER_DESCRIPTION=Medatafy API
+      - SWAGGER_VERSION=1.0.0
+      - BASIC_AUTH_USER=medatafy_api
+      - BASIC_AUTH_PASSWORD=123456
+      - POSTGRES_HOST=database
+      - POSTGRES_DB=medatafy_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_SYNCHRONIZE=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=medatafy
+      - MONGO_URI=mongodb://mongo:27017/medatafy_db
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - database
+      - doctor_microservice
+      - redis
+      - mongo
+
+  doctor_microservice:
+    build:
+      context: ./backend/doctor
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/doctor/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - POSTGRES_HOST=database
+      - POSTGRES_DB=medatafy_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_SYNCHRONIZE=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=medatafy
+    depends_on:
+      - database
+      - redis
+      - mongo
+
+  hospital_microservice:
+    build:
+      context: ./backend/hospital
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/hospital/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - POSTGRES_HOST=database
+      - POSTGRES_DB=medatafy_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_SYNCHRONIZE=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=medatafy
+    depends_on:
+      - database
+      - redis
+      - mongo
+
+  patient_microservice:
+    build:
+      context: ./backend/patient
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/patient/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - POSTGRES_HOST=database
+      - POSTGRES_DB=medatafy_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_SYNCHRONIZE=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=medatafy
+    depends_on:
+      - database
+      - redis
+      - mongo
+
+  nats:
+    image: nats:alpine
+    ports:
+      - "4222:4222"
+
+  database:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: medatafy_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - database_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=medatafy_db
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  database_data:
+    driver: local
+  mongo_data:
+    driver: local
