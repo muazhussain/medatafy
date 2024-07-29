@@ -8,7 +8,7 @@ import { UpdatePrescriptionDto } from '../dtos/update-prescription.dto';
 @Controller('prescription')
 export class PrescriptionController {
     constructor(
-        @Inject('NATS_CLIENT') private readonly natsClient: ClientProxy,
+        @Inject('NATS_SERVICE') private readonly natsClient: ClientProxy,
     ) { }
 
     @Get(':id')

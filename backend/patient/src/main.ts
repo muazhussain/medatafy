@@ -4,7 +4,6 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import AppDataSource from './data-source';
 
 async function bootstrap() {
-  console.log('Patient Microservice is Running!');
   await AppDataSource.initialize();
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
@@ -15,6 +14,6 @@ async function bootstrap() {
       },
     },
   );
-  await app.listen();
+  await app.listen().then(() => console.log(`Patient Microservice is running`));
 }
 bootstrap();

@@ -21,7 +21,7 @@ export class UserController {
             return commonResponse(true, 'User created successfully', res);
         } catch (error) {
             console.error(error);
-            throw error;
+            return commonResponse(false, 'User creation failed', error);
         }
     }
 
@@ -44,7 +44,7 @@ export class UserController {
             return commonResponse(true, 'User updated successfully', res);
         } catch (error) {
             console.error(error);
-            throw error;
+            return commonResponse(false, 'User update failed', error);
         }
     }
 
@@ -55,7 +55,7 @@ export class UserController {
             return commonResponse(true, 'User deleted successfully', res);
         } catch (error) {
             console.error(error);
-            throw error;
+            return commonResponse(false, 'User delete failed', error);
         }
     }
 }

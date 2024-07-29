@@ -1,5 +1,5 @@
-import { Controller, Inject } from '@nestjs/common';
-import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
+import { Controller } from '@nestjs/common';
+import {  EventPattern, Payload } from '@nestjs/microservices';
 import { HospitalAppointmentService } from '../services/hospital-appointment.service';
 import { CreateHospitalAppointmentDto } from '../dtos/create-hospital-appointment.dto';
 import { GetAllHospitalAppointmentDto } from '../dtos/get-all-hospital-appointment.dto';
@@ -9,7 +9,6 @@ import { commonResponse } from 'src/utils/output-message-format';
 @Controller()
 export class HospitalAppointmentController {
     constructor(
-        @Inject('NATS_CLIENT') private readonly natsClient: ClientProxy,
         private readonly hospitalAppointmentService: HospitalAppointmentService,
     ) { }
 

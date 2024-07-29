@@ -8,16 +8,15 @@ import { HospitalEntity } from "./hostpital.entity";
 @Entity('medical_report')
 export class MedicalReportEntity extends CommonEntity {
     @Column({
-        type: 'timestamptz',
-        nullable: true,
+        type: 'date',
     })
-    issueDate?: Date;
+    issueDate: string;
 
     @Column({
-        type: 'timestamptz',
+        type: 'date',
         nullable: true,
     })
-    deliveryDate?: Date;
+    deliveryDate?: string;
 
     @Column({
         nullable: true,

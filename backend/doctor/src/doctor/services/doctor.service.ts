@@ -23,6 +23,7 @@ export class DoctorService {
             if (!findDoctor) {
                 throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
             }
+            console.log('Yay!');
             return findDoctor;
         } catch (error) {
             throw error;

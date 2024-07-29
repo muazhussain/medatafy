@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as basicAuth from 'express-basic-auth';
+import AppDataSource from './data-source';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,12 +19,12 @@ async function bootstrap() {
   app.enableCors({ exposedHeaders: ['Content-Disposition'] });
 
   // Docker
-  // const basicAuthUser = process.env.BASIC_AUTH_USER;
-  // const basicAuthPassword = process.env.BASIC_AUTH_PASSWORD;
+  const basicAuthUser = process.env.BASIC_AUTH_USER;
+  const basicAuthPassword = process.env.BASIC_AUTH_PASSWORD;
 
   // Local
-  const basicAuthUser = 'medatafy_api';
-  const basicAuthPassword = '1234';
+  // const basicAuthUser = 'medatafy_api';
+  // const basicAuthPassword = '1234';
 
   app.use(
     ['/docs', '/docs-json'],
@@ -50,6 +51,8 @@ async function bootstrap() {
       caches: 'no-cache',
     },
   });
+
+  await AppDataSource.initialize();
 
   const PORT = process.env.PORT || 3000;
   await app.listen(PORT).then(() => console.log(`"HTTP Gateway" listening on port ${PORT}`));

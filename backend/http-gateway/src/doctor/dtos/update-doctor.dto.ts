@@ -64,8 +64,9 @@ export class UpdateDoctorDto {
         required: false,
         nullable: true,
         description: 'Date of birth of the doctor',
-        example: '1990-01-01',
-        default: '1990-01-01',
+        example: '01-01-2000',
+        default: '01-01-2000',
+        format: 'DD-MM-YYYY',
     })
     @IsString()
     @IsNotEmpty()
@@ -116,8 +117,9 @@ export class UpdateDoctorDto {
         required: false,
         nullable: true,
         description: 'Office hours of the doctor',
-        example: '9:00 AM - 5:00 PM',
-        default: '9:00 AM - 5:00 PM',
+        example: '14:00 - 18:00',
+        default: '14:00 - 18:00',
+        format: 'HH:mm - HH:mm',
     })
     @IsString()
     @IsNotEmpty()

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { GetAllDoctorDto } from '../dtos/get-all-doctor.dto';
@@ -8,12 +8,18 @@ import { UpdateDoctorDto } from '../dtos/update-doctor.dto';
 @Controller('doctor')
 export class DoctorController {
     constructor(
-        @Inject('NATS_CLIENT') private readonly natsClient: ClientProxy,
+        @Inject('NATS_SERVICE') private natsClient: ClientProxy,
     ) { }
+
+    @Post()
+    createHello() {
+        return this.natsClient.send({ cmd: 'createHello' }, '');
+    }
 
     @Get(':id')
     getDoctorById(@Param('id') id: string) {
-        this.natsClient.emit('getDoctorById', id);
+        console.log(id);
+        return this.natsClient.send({ cmd: 'getDoctorById' }, id);
     }
 
     @Get()

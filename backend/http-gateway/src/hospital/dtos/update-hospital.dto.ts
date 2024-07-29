@@ -45,9 +45,9 @@ export class UpdateHospitalDto {
         type: 'string',
         required: false,
         nullable: true,
-        description: 'Email of the hospital',
-        example: 'XpQpU@example.com',
-        default: 'XpQpU@example.com',
+        description: 'Description of the hospital',
+        example: 'Description of the hospital',
+        default: 'Description of the hospital',
     })
     @IsString()
     @IsNotEmpty()

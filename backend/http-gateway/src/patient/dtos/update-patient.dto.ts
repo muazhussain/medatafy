@@ -51,8 +51,9 @@ export class UpdatePatientDto {
         required: false,
         nullable: true,
         description: 'Date of birth of the patient',
-        example: '1990-01-01',
-        default: '1990-01-01',
+        example: '01-01-2000',
+        default: '01-01-2000',
+        format: 'DD-MM-YYYY',
     })
     @IsString()
     @IsNotEmpty()

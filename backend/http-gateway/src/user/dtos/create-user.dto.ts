@@ -9,72 +9,92 @@ enum Gender {
 
 class DoctorDto {
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Name of the doctor',
+        example: 'Dr. John Doe',
     })
     @IsString()
     @IsNotEmpty()
     name: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'BMDC registration number of the doctor',
+        example: '1234567890',
     })
     @IsString()
     @IsNotEmpty()
     bmdcRegNo: string;
 
     @ApiProperty({
-        required: true,
         type: 'enum',
-        example: Gender,
+        enum: Gender,
+        required: true,
+        description: 'Gender of doctor',
+        example: 'male',
     })
     @IsEnum(Gender, { message: 'Invalid gender' })
     gender: Gender;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Phone number of the doctor',
+        example: '1234567890',
     })
     @IsString()
     @IsNotEmpty()
     phone: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Date of birth of the doctor',
+        example: '01-01-2000',
+        format: 'DD-MM-YYYY',
     })
     @IsString()
     @IsNotEmpty()
     dateOfBirth: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Image of the doctor',
+        example: 'image.png',
     })
     @IsString()
     @IsNotEmpty()
     image: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Speciality of the doctor',
+        example: 'Cardiologist',
     })
     @IsString()
     @IsNotEmpty()
     speciality: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Address of the doctor',
+        example: 'Dhaka, Bangladesh',
     })
     @IsString()
     @IsNotEmpty()
     address: string;
 
     @ApiProperty({
-        required: false,
         type: 'string',
+        required: true,
+        description: 'Office hours of the doctor',
+        example: '14:00 - 18:00',
+        format: 'HH:mm - HH:mm',
     })
     @IsString()
     @IsNotEmpty()
@@ -83,64 +103,80 @@ class DoctorDto {
 
 class HospitalDto {
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Name of the hospital',
+        example: 'Hospital Name',
     })
     @IsString()
     @IsNotEmpty()
     name: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Address of the hospital',
+        example: 'Hospital Address',
     })
     @IsString()
     @IsNotEmpty()
     address: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Phone number of the hospital',
+        example: '1234567890',
     })
     @IsString()
     @IsNotEmpty()
     phone: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Description of the hospital',
+        example: 'Description of the hospital',
     })
     @IsString()
     @IsNotEmpty()
     description: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Image of the hospital',
+        example: 'image.png',
     })
     @IsString()
     @IsNotEmpty()
     image: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Website of the hospital',
+        example: 'www.hospital.com',
     })
     @IsString()
     @IsNotEmpty()
     website: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'BIN of the hospital',
+        example: '1234567890',
     })
     @IsString()
     @IsNotEmpty()
     bin: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'TIN of the hospital',
+        example: '1234567890',
     })
     @IsString()
     @IsNotEmpty()
@@ -149,48 +185,62 @@ class HospitalDto {
 
 class PatientDto {
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Name of the patient',
+        example: 'John Doe',
     })
     @IsString()
     @IsNotEmpty()
     name: string;
 
     @ApiProperty({
-        required: true,
         type: 'enum',
-        example: Gender,
+        enum: Gender,
+        required: true,
+        description: 'Gender of the patient',
+        example: 'male',
     })
     @IsEnum(Gender, { message: 'Invalid gender' })
     gender: Gender;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Phone number of the patient',
+        example: '1234567890',
     })
     @IsString()
     @IsNotEmpty()
     phone: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Date of birth of the patient',
+        example: '01-01-2000',
+        default: '01-01-2000',
+        format: 'DD-MM-YYYY',
     })
     @IsString()
     @IsNotEmpty()
     dateOfBirth: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Image of the patient',
+        example: 'patient.jpg',
     })
     @IsString()
     @IsNotEmpty()
     image: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
+        required: true,
+        description: 'Address of the patient',
+        example: 'Dhaka, Bangladesh',
     })
     @IsString()
     @IsNotEmpty()
@@ -199,17 +249,19 @@ class PatientDto {
 
 export class CreateUserDto {
     @ApiProperty({
-        required: true,
         type: 'string',
-        example: 'jDQ0t@example.com'
+        required: true,
+        description: 'Email of the user',
+        example: 'user@example.com',
     })
     @IsEmail()
     email: string;
 
     @ApiProperty({
-        required: true,
         type: 'string',
-        example: '12345678'
+        required: true,
+        description: 'Password of the user',
+        example: '12345678',
     })
     @IsString()
     @IsNotEmpty()
@@ -217,9 +269,11 @@ export class CreateUserDto {
     password: string;
 
     @ApiProperty({
-        required: true,
         type: 'enum',
-        example: UserType,
+        enum: UserType,
+        required: true,
+        description: 'Type of the user',
+        example: 'admin',
     })
     @IsEnum(UserType, { message: 'Invalid user type' })
     userType: UserType;

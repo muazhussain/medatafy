@@ -9,7 +9,7 @@ import { commonResponse } from 'src/utils/output-message-format';
 @Controller()
 export class MedicalReportController {
     constructor(
-        @Inject('NATS_CLIENT') private readonly natsClient: ClientProxy,
+        // @Inject('NATS_SERVICE') private readonly natsClient: ClientProxy,
         private readonly medicalReportService: MedicalReportService,
     ) { }
 

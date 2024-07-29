@@ -3,11 +3,12 @@ import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
 import { PatientService } from '../services/patient.service';
 import { GetAllPatientDto } from '../dtos/get-all-patient.dto';
 import { UpdatePatientDto } from '../dtos/update-patient.dto';
+import { commonResponse } from 'src/utils/output-message-format';
 
-@Controller('patient')
+@Controller()
 export class PatientController {
     constructor(
-        @Inject('NATS_CLIENT') private readonly natsClient: ClientProxy,
+        // @Inject('NATS_SERVICE') private readonly natsClient: ClientProxy,
         private readonly patientService: PatientService,
     ) { }
 
@@ -15,11 +16,10 @@ export class PatientController {
     async getPatientById(@Payload() id: string) {
         try {
             const res = await this.patientService.getPatientById(id);
-            if (res) {
-                this.natsClient.emit('getPatientById', res);
-            }
+            return commonResponse(true, 'Get patient successfully', res);
         } catch (error) {
-            throw error;
+            console.error(error);
+            return commonResponse(false, 'Get patient failed', error);
         }
     }
 
@@ -27,11 +27,10 @@ export class PatientController {
     async getAllPatient(@Payload() payload: GetAllPatientDto) {
         try {
             const res = await this.patientService.getAllPatient(payload);
-            if (res) {
-                this.natsClient.emit('getAllPatient', res);
-            }
+            return commonResponse(true, 'Get all patient successfully', res);
         } catch (error) {
-            throw error;
+            console.error(error);
+            return commonResponse(false, 'Get all patient failed', error);
         }
     }
 
@@ -40,11 +39,10 @@ export class PatientController {
         try {
             const { id, data } = payload;
             const res = await this.patientService.updatePatient(id, data);
-            if (res) {
-                this.natsClient.emit('updatePatient', res);
-            }
+            return commonResponse(true, 'Update patient successfully', res);
         } catch (error) {
-            throw error;
+            console.error(error);
+            return commonResponse(false, 'Update patient failed', error);
         }
     }
 }

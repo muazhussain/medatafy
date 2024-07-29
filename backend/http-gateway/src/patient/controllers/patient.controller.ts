@@ -8,12 +8,12 @@ import { UpdatePatientDto } from '../dtos/update-patient.dto';
 @Controller('patient')
 export class PatientController {
     constructor(
-        @Inject('NATS_CLIENT') private readonly natsClient: ClientProxy,
+        @Inject('NATS_SERVICE') private readonly natsClient: ClientProxy,
     ) { }
 
     @Get(':id')
     getPatientById(@Param('id') id: string) {
-        this.natsClient.emit('getPatientById', id);
+        return this.natsClient.send('getPatientById', id);
     }
 
     @Get()

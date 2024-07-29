@@ -3,7 +3,7 @@ import { PatientEntity } from "src/other-entities/patient.entity";
 import { CommonEntity } from "src/utils/common.entity";
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
-export enum HospitalAppointmentStatus {
+enum HospitalAppointmentStatus {
     PENDING = 'pending',
     COMPLETED = 'completed',
     CANCELLED_BY_PATIENT = 'cancelled_by_patient',

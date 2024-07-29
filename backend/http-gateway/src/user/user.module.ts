@@ -1,3 +1,5 @@
+// user.module.ts
+
 import { Module } from '@nestjs/common';
 import { UserController } from './controllers/user.controller';
 import { UserService } from './services/user.service';
@@ -13,8 +15,8 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
 import { DoctorEntity } from 'src/other-entities/doctor.entity';
-import { HospitalEntity } from 'src/other-entities/hostpital.entity';
 import { PatientEntity } from 'src/other-entities/patient.entity';
+import { HospitalEntity } from 'src/other-entities/hostpital.entity';
 
 @Module({
   imports: [
@@ -32,12 +34,11 @@ import { PatientEntity } from 'src/other-entities/patient.entity';
     ]),
     PassportModule,
     JwtModule.register({
-      // secret: process.env.JWT_SECRET,
-      secret: '1234',
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
     RedisModule.forRoot({
-      url: 'redis://localhost:6379',
+      url: process.env.REDIS_URL,
       type: 'single',
       options: {},
     }),

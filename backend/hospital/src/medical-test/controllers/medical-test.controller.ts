@@ -1,5 +1,5 @@
-import { Controller, Inject } from '@nestjs/common';
-import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
+import { Controller } from '@nestjs/common';
+import { EventPattern, Payload } from '@nestjs/microservices';
 import { MedicalTestService } from '../services/medical-test.service';
 import { CreateMedicalTestDto } from '../dtos/create-medical-test.dto';
 import { GetAllMedicalTestDto } from '../dtos/get-all-medical-test.dto';
@@ -9,7 +9,6 @@ import { commonResponse } from 'src/utils/output-message-format';
 @Controller()
 export class MedicalTestController {
     constructor(
-        @Inject('NATS_CLIENT') private readonly natsClient: ClientProxy,
         private readonly medicalTestService: MedicalTestService,
     ) { }
 

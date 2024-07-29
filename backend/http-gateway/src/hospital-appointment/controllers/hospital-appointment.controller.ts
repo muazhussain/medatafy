@@ -9,7 +9,7 @@ import { UpdateHospitalAppointmentDto } from '../dtos/update-hospital-appointmen
 @Controller('hospital-appointment')
 export class HospitalAppointmentController {
     constructor(
-        @Inject('NATS_CLIENT') private readonly natsClient: ClientProxy,
+        @Inject('NATS_SERVICE') private readonly natsClient: ClientProxy,
     ) { }
 
     @Post()

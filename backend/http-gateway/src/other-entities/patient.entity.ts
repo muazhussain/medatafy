@@ -23,12 +23,11 @@ export class PatientEntity extends CommonEntity {
     gender: Gender;
 
     @Column()
-    weight: number;
-
-    @Column()
     phone: string;
 
-    @Column()
+    @Column({
+        type: 'date',
+    })
     dateOfBirth: string;
 
     @Column()

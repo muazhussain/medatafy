@@ -1,22 +1,27 @@
-import { Controller, Inject } from '@nestjs/common';
-import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
+import { Controller } from '@nestjs/common';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { DoctorService } from '../services/doctor.service';
 import { GetAllDoctorDto } from '../dtos/get-all-doctor.dto';
 import { UpdateDoctorDto } from '../dtos/update-doctor.dto';
 import { commonResponse } from 'src/utils/output-message-format';
 
-@Controller('doctor')
-export class DoctorController {
+@Controller()
+export class DoctorMicroserviceController {
     constructor(
-        @Inject('NATS_CLIENT') private readonly natsClient: ClientProxy,
         private readonly doctorService: DoctorService,
     ) { }
 
-    @EventPattern('getDoctorById')
+    @MessagePattern({ cmd: 'createHello' })
+    createUser(@Payload() data: any) {
+        return { msg: 'hello' };
+    }
+
+    @MessagePattern({ cmd: 'getDoctorById' })
     async getDoctorById(@Payload() id: string) {
         try {
-            const res = await this.doctorService.getDoctorById(id);
-            return commonResponse(true, 'Get doctor successfully', res);
+            console.log('here');
+            // const res = await this.doctorService.getDoctorById(id);
+            // return commonResponse(true, 'Get doctor successfully', res);
         } catch (error) {
             console.error(error);
             return commonResponse(false, 'Get doctor failed', error);
