@@ -8,16 +8,15 @@ import { PatientEntity } from "./patient.entity";
 @Entity('medical_report')
 export class MedicalReportEntity extends CommonEntity {
     @Column({
-        type: 'timestamptz',
-        nullable: true,
+        type: 'date',
     })
-    issueDate?: Date;
+    issueDate: string;
 
     @Column({
-        type: 'timestamptz',
+        type: 'date',
         nullable: true,
     })
-    deliveryDate?: Date;
+    deliveryDate?: string;
 
     @Column({
         nullable: true,
@@ -29,7 +28,7 @@ export class MedicalReportEntity extends CommonEntity {
     })
     summary?: string;
 
-    @ManyToOne(() => MedicalTestEntity, (medicalTest) => medicalTest.hospital,)
+    @ManyToOne(() => MedicalTestEntity, (test) => test.medicalReports,)
     @JoinColumn({ name: 'medical_test_id' })
     medicalTest: MedicalTestEntity;
 

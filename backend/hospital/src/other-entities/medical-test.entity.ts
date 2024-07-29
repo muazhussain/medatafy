@@ -4,8 +4,7 @@ import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { MedicalReportEntity } from "./medical-report.entity";
 import { MedicalTestPrescriptionRelationEntity } from "./medical-test-prescription-relation.entity";
 
-
-export enum MedicalTestType {
+enum MedicalTestType {
     LAB = 'lab',
     IMAGING = 'imaging',
     OTHER = 'other',

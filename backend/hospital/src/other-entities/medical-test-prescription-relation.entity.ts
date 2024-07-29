@@ -3,7 +3,6 @@ import { Entity, ManyToOne, JoinColumn, Column } from "typeorm";
 import { MedicalTestEntity } from "./medical-test.entity";
 import { PrescriptionEntity } from "./prescription.entity";
 
-
 @Entity('medical_test_prescription_relation')
 export class MedicalTestPrescriptionRelationEntity extends CommonEntity {
     @ManyToOne(() => MedicalTestEntity, (medicalTest) => medicalTest.medicalTestPrescriptionRelations,)

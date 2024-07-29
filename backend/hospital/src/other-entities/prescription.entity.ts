@@ -5,30 +5,30 @@ import { MedicalTestPrescriptionRelationEntity } from "./medical-test-prescripti
 import { PatientEntity } from "./patient.entity";
 import { MedicinePrescriptionRelationEntity } from "./medicine-prescription-relation.entity";
 
-
 @Entity('prescription')
 export class PrescriptionEntity extends CommonEntity {
     @Column({
-        type: 'timestamptz',
-        nullable: true,
+        type: 'date',
     })
-    date?: Date;
+    date: string;
 
-    @Column({
+    @Column("text", {
+        array: true,
         nullable: true,
     })
     chiefComplaints?: string[];
 
-    @Column({
+    @Column("text", {
+        array: true,
         nullable: true,
     })
     advice?: string[];
 
     @Column({
-        type: 'timestamptz',
+        type: 'date',
         nullable: true,
     })
-    followUp?: Date;
+    followUp?: string;
 
     @ManyToOne(() => DoctorEntity, (doctor) => doctor.prescriptions,)
     @JoinColumn({ name: 'doctor_id' })
