@@ -1,18 +1,16 @@
 import { Module } from '@nestjs/common';
-import { DoctorController } from './controllers/doctor.controller';
+import { DoctorMicroserviceController } from './controllers/doctor.controller';
 import { DoctorService } from './services/doctor.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DoctorAppointmentEntity } from 'src/doctor-appointment/entities/doctor-appointment.entity';
-import { NatsClientModule } from 'src/nats-client/nats-client.module';
+import { DoctorEntity } from './entities/doctor.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      DoctorAppointmentEntity,
+      DoctorEntity,
     ]),
-    NatsClientModule,
   ],
-  controllers: [DoctorController],
+  controllers: [DoctorMicroserviceController],
   providers: [DoctorService]
 })
 export class DoctorModule { }
