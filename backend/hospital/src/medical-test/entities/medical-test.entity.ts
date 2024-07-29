@@ -4,7 +4,7 @@ import { MedicalTestPrescriptionRelationEntity } from "src/other-entities/medica
 import { CommonEntity } from "src/utils/common.entity";
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 
-export enum MedicalTestType {
+enum MedicalTestType {
     LAB = 'lab',
     IMAGING = 'imaging',
     OTHER = 'other',

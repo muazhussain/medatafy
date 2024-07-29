@@ -1,5 +1,10 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-import { MedicalTestType } from "../entities/medical-test.entity";
+
+enum MedicalTestType {
+    LAB = 'lab',
+    IMAGING = 'imaging',
+    OTHER = 'other',
+}
 
 export class UpdateMedicalTestDto {
     @IsString()
