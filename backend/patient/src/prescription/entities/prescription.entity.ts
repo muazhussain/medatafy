@@ -12,12 +12,14 @@ export class PrescriptionEntity extends CommonEntity {
     })
     date: string;
 
-    @Column({
+    @Column("text", {
+        array: true,
         nullable: true,
     })
     chiefComplaints?: string[];
 
-    @Column({
+    @Column("text", {
+        array: true,
         nullable: true,
     })
     advice?: string[];
