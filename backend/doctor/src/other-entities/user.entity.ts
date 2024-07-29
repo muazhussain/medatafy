@@ -1,13 +1,14 @@
 import { DoctorEntity } from "src/doctor/entities/doctor.entity";
 import { CommonEntity } from "src/utils/common.entity";
-import { Column, Entity, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
 import { PatientEntity } from "./patient.entity";
+import { HospitalEntity } from "./hospital.entity";
 
 export enum UserType {
+    MEDATAFY_ADMIN = 'medatafy_admin',
     PATIENT = 'patient',
     DOCTOR = 'doctor',
-    HOSPITAL_ADMIN = 'hospitalAdmin',
-    HOSPITAL_EMPLOYEE = 'hospitalEmployee',
+    HOSPITAL = 'hospital',
 }
 
 export enum AccountStatus {
@@ -21,39 +22,15 @@ export enum AccountType {
     PREMIUM = 'premium',
 }
 
-export enum Gender {
-    MALE = 'male',
-    FEMALE = 'female',
-}
-
 @Entity('user')
 export class UserEntity extends CommonEntity {
-    @Column()
-    name: string;
-
-    @Column()
+    @Column({
+        unique: true,
+    })
     email: string;
 
     @Column()
     password: string;
-
-    @Column()
-    uniqueId: string;
-
-    @Column({
-        type: 'enum',
-        enum: Gender
-    })
-    gender: Gender;
-
-    @Column({ nullable: true })
-    phone?: string;
-
-    @Column()
-    dateOfBirth: string;
-
-    @Column({ nullable: true })
-    image?: string;
 
     @Column({
         type: 'enum',
@@ -79,9 +56,15 @@ export class UserEntity extends CommonEntity {
     @Column({ nullable: true })
     mongoRef?: string;
 
-    @OneToOne(() => DoctorEntity, doctor => doctor.user)
-    doctor: DoctorEntity;
+    @OneToOne(() => DoctorEntity, (doctor) => doctor.user,)
+    @JoinColumn({ name: 'doctor_id' })
+    doctor?: DoctorEntity;
 
-    @OneToOne(() => PatientEntity, patient => patient.user,)
-    patient: PatientEntity;
+    @OneToOne(() => HospitalEntity, (hospital) => hospital.user,)
+    @JoinColumn({ name: 'hospital_id' })
+    hospital?: HospitalEntity;
+
+    @OneToOne(() => PatientEntity, (patient) => patient.user,)
+    @JoinColumn({ name: 'patient_id' })
+    patient?: PatientEntity;
 }

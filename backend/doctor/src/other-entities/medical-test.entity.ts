@@ -1,15 +1,16 @@
-import { CommonEntity } from "src/Utils/common.entity";
-import { Column, Entity, OneToMany } from "typeorm";
+import { CommonEntity } from "src/utils/common.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { MedicalReportEntity } from "./medical-report.entity";
 import { MedicalTestPrescriptionRelationEntity } from "./medical-test-prescription-relation.entity";
+import { HospitalEntity } from "./hospital.entity";
 
-export enum MedicalTestType {
+enum MedicalTestType {
     LAB = 'lab',
     IMAGING = 'imaging',
     OTHER = 'other',
 }
 
-@Entity('test')
+@Entity('medical_test')
 export class MedicalTestEntity extends CommonEntity {
     @Column()
     testName: string;
@@ -22,6 +23,10 @@ export class MedicalTestEntity extends CommonEntity {
 
     @Column('float')
     cost: number;
+
+    @ManyToOne(() => HospitalEntity, (hospital) => hospital.medicalTests,)
+    @JoinColumn({ name: 'hospital' })
+    hospital: HospitalEntity[];
 
     @OneToMany(() => MedicalReportEntity, (medicalReport) => medicalReport.medicalTest,)
     medicalReports: MedicalReportEntity[];

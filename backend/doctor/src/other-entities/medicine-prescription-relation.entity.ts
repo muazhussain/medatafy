@@ -13,6 +13,8 @@ export class MedicinePrescriptionRelationEntity extends CommonEntity {
     @JoinColumn({ name: 'prescription_id' })
     prescription: PrescriptionEntity;
 
-    @Column()
-    instruction: string;
+    @Column({
+        nullable: true,
+    })
+    instruction?: string;
 }
