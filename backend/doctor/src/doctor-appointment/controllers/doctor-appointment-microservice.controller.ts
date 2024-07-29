@@ -7,7 +7,7 @@ import { DoctorAppointmentService } from '../services/doctor-appointment.service
 import { commonResponse } from 'src/utils/output-message-format';
 
 @Controller()
-export class DoctorAppointmentController {
+export class DoctorAppointmentMircoserviceController {
     constructor(
         private readonly doctorAppointmentService: DoctorAppointmentService,
     ) { }
