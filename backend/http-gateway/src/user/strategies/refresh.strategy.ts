@@ -8,8 +8,8 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
         super({
             jwtFromRequest: ExtractJwt.fromUrlQueryParameter('refreshToken'),
             ignoreExpiration: false,
-            secretOrKey: '1234',
-            // secretOrKey: process.env.JWT_SECRET,
+            // secretOrKey: '1234',
+            secretOrKey: process.env.JWT_SECRET,
             passReqToCallback: true,
         });
     }
