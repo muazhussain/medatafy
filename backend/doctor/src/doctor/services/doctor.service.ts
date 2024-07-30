@@ -16,14 +16,10 @@ export class DoctorService {
         try {
             const findDoctor = await this.doctorRepository.findOne({
                 where: { id: id },
-                relations: {
-                    user: true,
-                },
             });
             if (!findDoctor) {
                 throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
             }
-            console.log('Yay!');
             return findDoctor;
         } catch (error) {
             throw error;
@@ -37,9 +33,6 @@ export class DoctorService {
                     gender: payload.gender,
                     speciality: payload.speciality,
                     address: payload.address,
-                },
-                relations: {
-                    user: true,
                 },
                 take: Math.max(payload.take, 0),
                 skip: (Math.max(payload.page, 1) - 1) * Math.max(payload.take, 0),

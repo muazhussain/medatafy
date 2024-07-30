@@ -22,7 +22,7 @@ export class DoctorMicroserviceController {
         }
     }
 
-    @EventPattern('getAllDoctor')
+    @MessagePattern({ cmd: 'getAllDoctor' })
     async getAllDoctor(@Payload() payload: GetAllDoctorDto) {
         try {
             const res = await this.doctorService.getAllDoctor(payload);
@@ -33,11 +33,10 @@ export class DoctorMicroserviceController {
         }
     }
 
-    @EventPattern('updateDoctor')
+    @MessagePattern({ cmd: 'updateDoctor' })
     async updateDoctor(@Payload() payload: { id: string, data: UpdateDoctorDto }) {
         try {
-            const { id, data } = payload;
-            const res = await this.doctorService.updateDoctor(id, data);
+            const res = await this.doctorService.updateDoctor(payload.id, payload.data);
             return commonResponse(true, 'Update doctor successfully', res);
         } catch (error) {
             console.error(error);

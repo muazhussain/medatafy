@@ -13,17 +13,16 @@ export class DoctorController {
 
     @Get(':id')
     getDoctorById(@Param('id') id: string) {
-        console.log(id);
         return this.natsClient.send({ cmd: 'getDoctorById' }, id);
     }
 
     @Get()
     getAllDoctor(@Query() payload: GetAllDoctorDto) {
-        this.natsClient.emit('getAllDoctor', payload);
+        return this.natsClient.send({ cmd: 'getAllDoctor' }, payload);
     }
 
     @Patch(':id')
-    updateDoctor(@Param('id') id: string, @Body() payload: UpdateDoctorDto) {
-        this.natsClient.emit('updateDoctor', { id, payload });
+    updateDoctor(@Param('id') id: string, @Body() data: UpdateDoctorDto) {
+        return this.natsClient.send({ cmd: 'updateDoctor' }, { id, data });
     }
 }
