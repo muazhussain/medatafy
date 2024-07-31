@@ -16,9 +16,6 @@ export class PatientService {
         try {
             const findPatient = await this.patientRepository.findOne({
                 where: { id: id },
-                relations: {
-                    user: true,
-                },
             });
             if (!findPatient) {
                 throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
@@ -35,8 +32,8 @@ export class PatientService {
                 where: {
                     gender: payload.gender,
                 },
-                relations: {
-                    user: true,
+                order: {
+                    createdAt: 'DESC',
                 },
                 take: Math.max(payload.take, 0),
                 skip: (Math.max(payload.page, 1) - 1) * Math.max(payload.take, 0),

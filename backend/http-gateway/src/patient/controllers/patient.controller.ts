@@ -13,16 +13,16 @@ export class PatientController {
 
     @Get(':id')
     getPatientById(@Param('id') id: string) {
-        return this.natsClient.send('getPatientById', id);
+        return this.natsClient.send({ cmd: 'getPatientById' }, id);
     }
 
     @Get()
     getAllPatient(@Query() payload: GetAllPatientDto) {
-        this.natsClient.emit('getAllPatient', payload);
+        return this.natsClient.send({ cmd: 'getAllPatient' }, payload);
     }
 
     @Patch(':id')
-    updatePatient(@Param('id') id: string, @Body() payload: UpdatePatientDto) {
-        this.natsClient.emit('updatePatient', { id, payload });
+    updatePatient(@Param('id') id: string, @Body() data: UpdatePatientDto) {
+        return this.natsClient.send({ cmd: 'updatePatient' }, { id, data });
     }
 }

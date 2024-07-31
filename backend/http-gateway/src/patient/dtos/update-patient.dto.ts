@@ -13,7 +13,6 @@ export class UpdatePatientDto {
         nullable: true,
         description: 'Name of the patient',
         example: 'John Doe',
-        default: 'John Doe',
     })
     @IsString()
     @IsNotEmpty()
@@ -27,7 +26,6 @@ export class UpdatePatientDto {
         nullable: true,
         description: 'Gender of the patient',
         example: 'male',
-        default: 'male',
     })
     @IsEnum(Gender, { message: 'gender must be male or female' })
     @IsOptional()
@@ -39,7 +37,6 @@ export class UpdatePatientDto {
         nullable: true,
         description: 'Phone number of the patient',
         example: '1234567890',
-        default: '1234567890',
     })
     @IsString()
     @IsNotEmpty()
@@ -52,7 +49,6 @@ export class UpdatePatientDto {
         nullable: true,
         description: 'Date of birth of the patient',
         example: '01-01-2000',
-        default: '01-01-2000',
         format: 'DD-MM-YYYY',
     })
     @IsString()
@@ -66,7 +62,6 @@ export class UpdatePatientDto {
         nullable: true,
         description: 'Image of the patient',
         example: 'patient.jpg',
-        default: 'patient.jpg',
     })
     @IsString()
     @IsNotEmpty()
@@ -79,7 +74,6 @@ export class UpdatePatientDto {
         nullable: true,
         description: 'Address of the patient',
         example: 'Dhaka, Bangladesh',
-        default: 'Dhaka, Bangladesh',
     })
     @IsString()
     @IsNotEmpty()
