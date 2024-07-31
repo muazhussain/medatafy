@@ -28,7 +28,6 @@ export class GetAllHospitalDto {
         nullable: true,
         description: 'Name of the hospital',
         example: 'Hospital Name',
-        default: 'Hospital Name',
     })
     @IsString()
     @IsOptional()
@@ -40,7 +39,6 @@ export class GetAllHospitalDto {
         nullable: true,
         description: 'Address of the hospital',
         example: 'Hospital Address',
-        default: 'Hospital Address',
     })
     @IsString()
     @IsOptional()

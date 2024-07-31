@@ -36,9 +36,6 @@ export class HospitalService {
                 where: {
                     id: id,
                 },
-                relations: {
-                    user: true,
-                },
             });
             if (!findHospital) {
                 throw new HttpException('Hospital not found', HttpStatus.NOT_FOUND);
