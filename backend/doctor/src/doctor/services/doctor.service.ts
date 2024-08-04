@@ -34,6 +34,9 @@ export class DoctorService {
                     speciality: payload.speciality,
                     address: payload.address,
                 },
+                order: {
+                    createdAt: 'DESC',
+                },
                 take: Math.max(payload.take, 0),
                 skip: (Math.max(payload.page, 1) - 1) * Math.max(payload.take, 0),
             });

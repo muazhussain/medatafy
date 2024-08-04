@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CreateDoctorAppointmentDto } from '../dtos/create-doctor-appointment.dto';
 import { GetAllDoctorAppointmentDto } from '../dtos/get-all-doctor-appointment.dto';
 import { UpdateDoctorAppointmentDto } from '../dtos/update-doctor-appointment.dto';
@@ -12,7 +12,7 @@ export class DoctorAppointmentMircoserviceController {
         private readonly doctorAppointmentService: DoctorAppointmentService,
     ) { }
 
-    @EventPattern('createDoctorAppointment')
+    @MessagePattern({ cmd: 'createDoctorAppointment' })
     async createAppointment(@Payload() payload: CreateDoctorAppointmentDto) {
         try {
             const res = await this.doctorAppointmentService.createDoctorAppointment(payload);
@@ -23,7 +23,7 @@ export class DoctorAppointmentMircoserviceController {
         }
     }
 
-    @EventPattern('getDoctorAppointmentById')
+    @MessagePattern({ cmd: 'getDoctorAppointmentById' })
     async getAppointmentById(@Payload() id: string) {
         try {
             const res = await this.doctorAppointmentService.getDoctorAppointmentById(id);
@@ -34,7 +34,7 @@ export class DoctorAppointmentMircoserviceController {
         }
     }
 
-    @EventPattern('getAllDoctorAppointment')
+    @MessagePattern({ cmd: 'getAllDoctorAppointment' })
     async getAllAppointment(@Payload() payload: GetAllDoctorAppointmentDto) {
         try {
             const res = await this.doctorAppointmentService.getAllDoctorAppointment(payload);
@@ -45,11 +45,10 @@ export class DoctorAppointmentMircoserviceController {
         }
     }
 
-    @EventPattern('updateDoctorAppointment')
+    @MessagePattern({ cmd: 'updateDoctorAppointment' })
     async updateAppointment(@Payload() payload: { id: string, data: UpdateDoctorAppointmentDto }) {
         try {
-            const { id, data } = payload;
-            const res = await this.doctorAppointmentService.updateDoctorAppointment(id, data);
+            const res = await this.doctorAppointmentService.updateDoctorAppointment(payload.id, payload.data);
             return commonResponse(true, 'Update doctor appointment successfully', res);
         } catch (error) {
             console.error(error);
@@ -57,7 +56,7 @@ export class DoctorAppointmentMircoserviceController {
         }
     }
 
-    @EventPattern('deleteDoctorAppointment')
+    @MessagePattern({ cmd: 'deleteDoctorAppointment' })
     async deleteAppointment(@Payload() id: string) {
         try {
             const res = await this.doctorAppointmentService.deleteDoctorAppointment(id);

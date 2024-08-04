@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { DoctorService } from '../services/doctor.service';
 import { GetAllDoctorDto } from '../dtos/get-all-doctor.dto';
 import { UpdateDoctorDto } from '../dtos/update-doctor.dto';

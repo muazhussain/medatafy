@@ -14,26 +14,26 @@ export class DoctorAppointmentController {
 
     @Post()
     createDoctorAppointment(@Body() payload: CreateDoctorAppointmentDto) {
-        return this.natsClient.send('createDoctorAppointment', payload);
+        return this.natsClient.send({ cmd: 'createDoctorAppointment' }, payload);
     }
 
     @Get(':id')
     getDoctorAppointmentById(@Param('id') id: string) {
-        return this.natsClient.send('getDoctorAppointmentById', id);
+        return this.natsClient.send({ cmd: 'getDoctorAppointmentById' }, id);
     }
 
     @Get()
     getAllDoctorAppointment(@Query() payload: GetAllDoctorAppointmentDto) {
-        return this.natsClient.send('getAllDoctorAppointment', payload);
+        return this.natsClient.send({ cmd: 'getAllDoctorAppointment' }, payload);
     }
 
     @Patch(':id')
-    updateDoctorAppointment(@Param('id') id: string, @Body() payload: UpdateDoctorAppointmentDto) {
-        return this.natsClient.send('updateDoctorAppointment', { id, payload });
+    updateDoctorAppointment(@Param('id') id: string, @Body() data: UpdateDoctorAppointmentDto) {
+        return this.natsClient.send({ cmd: 'updateDoctorAppointment' }, { id, data });
     }
 
     @Delete(':id')
     deleteDoctorAppointment(@Param('id') id: string) {
-        return this.natsClient.send('deleteDoctorAppointment', id);
+        return this.natsClient.send({ cmd: 'deleteDoctorAppointment' }, id);
     }
 }

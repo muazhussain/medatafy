@@ -16,7 +16,6 @@ export class UpdateDoctorAppointmentDto {
         description: 'Appointment date',
         format: 'DD-MM-YYYY',
         example: '01-01-2022',
-        default: '01-01-2022',
     })
     @IsString()
     @IsNotEmpty()
@@ -30,7 +29,6 @@ export class UpdateDoctorAppointmentDto {
         description: 'Appointment time',
         format: 'HH:mm',
         example: '14:00',
-        default: '14:00',
     })
     @IsString()
     @IsNotEmpty()
@@ -44,7 +42,6 @@ export class UpdateDoctorAppointmentDto {
         nullable: true,
         description: 'Appointment status',
         example: 'pending',
-        default: 'pending',
     })
     @IsEnum(DoctorAppointmentStatus, { message: 'Invalid status' })
     @IsOptional()
@@ -56,7 +53,6 @@ export class UpdateDoctorAppointmentDto {
         nullable: true,
         description: 'Patient ID',
         example: '123e4567-e89b-12d3-a456-426655440000',
-        default: '123e4567-e89b-12d3-a456-426655440000',
     })
     @IsUUID()
     @IsOptional()
@@ -68,7 +64,6 @@ export class UpdateDoctorAppointmentDto {
         nullable: true,
         description: 'Doctor ID',
         example: '123e4567-e89b-12d3-a456-426655440000',
-        default: '123e4567-e89b-12d3-a456-426655440000',
     })
     @IsUUID()
     @IsOptional()

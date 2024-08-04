@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DoctorAppointmentEntity } from '../entities/doctor-appointment.entity';
-import { DeleteResult, In, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateDoctorAppointmentDto } from '../dtos/create-doctor-appointment.dto';
 import { GetAllDoctorAppointmentDto } from '../dtos/get-all-doctor-appointment.dto';
 import { UpdateDoctorAppointmentDto } from '../dtos/update-doctor-appointment.dto';
@@ -39,7 +39,7 @@ export class DoctorAppointmentService {
     async getDoctorAppointmentById(id: string): Promise<DoctorAppointmentEntity> {
         try {
             const findDoctorAppointment = await this.doctorAppointmentRepository.findOne({
-                where: { id },
+                where: { id: id },
                 relations: {
                     patient: true,
                     doctor: true
@@ -58,13 +58,13 @@ export class DoctorAppointmentService {
         try {
             return await this.doctorAppointmentRepository.find({
                 where: {
-                    date: In(payload.dates),
-                    status: In(payload.status),
+                    date: (payload.dates) ? In(payload.dates) : null,
+                    status: (payload.status) ? In(payload.status) : null,
                     patient: {
-                        id: In(payload.patients),
+                        id: (payload.patients) ? In(payload.patients) : null,
                     },
                     doctor: {
-                        id: In(payload.doctors),
+                        id: (payload.doctors) ? In(payload.doctors) : null,
                     },
                 },
                 relations: {
