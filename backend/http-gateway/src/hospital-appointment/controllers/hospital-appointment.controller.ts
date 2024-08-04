@@ -14,26 +14,26 @@ export class HospitalAppointmentController {
 
     @Post()
     createHospitalAppointment(@Body() payload: CreateHospitalAppointmentDto) {
-        this.natsClient.emit('createHospitalAppointment', payload);
+        return this.natsClient.send({ cmd: 'createHospitalAppointment' }, payload);
     }
 
     @Get(':id')
     getHospitalAppointmentById(@Param('id') id: string) {
-        this.natsClient.emit('getHospitalAppointmentById', id);
+        return this.natsClient.send({ cmd: 'getHospitalAppointmentById' }, id);
     }
 
     @Get()
     getAllHospitalAppointment(@Query() payload: GetAllHospitalAppointmentDto) {
-        this.natsClient.emit('getAllHospitalAppointment', payload);
+        return this.natsClient.send({ cmd: 'getAllHospitalAppointment' }, payload);
     }
 
     @Patch(':id')
-    updateHospitalAppointment(@Param('id') id: string, @Body() payload: UpdateHospitalAppointmentDto) {
-        this.natsClient.emit('updateHospitalAppointment', { id, payload });
+    updateHospitalAppointment(@Param('id') id: string, @Body() data: UpdateHospitalAppointmentDto) {
+        return this.natsClient.send({ cmd: 'updateHospitalAppointment' }, { id, data });
     }
 
     @Delete(':id')
     deleteHospitalAppointment(@Param('id') id: string) {
-        this.natsClient.emit('deleteHospitalAppointment', id);
+        return this.natsClient.send({ cmd: 'deleteHospitalAppointment' }, id);
     }
 }

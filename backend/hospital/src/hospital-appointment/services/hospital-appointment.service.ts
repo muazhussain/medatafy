@@ -26,6 +26,7 @@ export class HospitalAppointmentService {
                 hospital: payload.hospital as any,
             });
             const appointment = await queryRunner.manager.save(this.hospitalAppointmentRepository.metadata.target, newAppointment);
+            await queryRunner.commitTransaction();
             return this.getHospitalAppointmentById(appointment.id);
         } catch (error) {
             await queryRunner.rollbackTransaction();

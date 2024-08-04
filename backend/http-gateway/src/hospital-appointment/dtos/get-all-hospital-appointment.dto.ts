@@ -35,7 +35,6 @@ export class GetAllHospitalAppointmentDto {
         nullable: true,
         description: 'Dates',
         example: ['01-01-2022', '01-02-2022'],
-        default: ['01-01-2022', '01-02-2022'],
     })
     @ValidateNested({ each: true })
     @IsArray()
@@ -49,7 +48,6 @@ export class GetAllHospitalAppointmentDto {
         nullable: true,
         description: 'Statuses',
         example: ['pending', 'completed'],
-        default: ['pending', 'completed'],
     })
     @ValidateNested({ each: true })
     @IsArray()
@@ -63,7 +61,6 @@ export class GetAllHospitalAppointmentDto {
         nullable: true,
         description: 'UUID of patients',
         example: ['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001'],
-        default: ['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001'],
     })
     @ValidateNested({ each: true })
     @IsArray()
@@ -77,7 +74,6 @@ export class GetAllHospitalAppointmentDto {
         nullable: true,
         description: 'UUID of hospitals',
         example: ['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001'],
-        default: ['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001'],
     })
     @ValidateNested({ each: true })
     @IsArray()

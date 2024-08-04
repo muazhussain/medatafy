@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import {  EventPattern, Payload } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { HospitalAppointmentService } from '../services/hospital-appointment.service';
 import { CreateHospitalAppointmentDto } from '../dtos/create-hospital-appointment.dto';
 import { GetAllHospitalAppointmentDto } from '../dtos/get-all-hospital-appointment.dto';
@@ -7,12 +7,12 @@ import { UpdateHospitalAppointmentDto } from '../dtos/update-hospital-appointmen
 import { commonResponse } from 'src/utils/output-message-format';
 
 @Controller()
-export class HospitalAppointmentController {
+export class HospitalAppointmentMicroserviceController {
     constructor(
         private readonly hospitalAppointmentService: HospitalAppointmentService,
     ) { }
 
-    @EventPattern('createHospitalAppointment')
+    @MessagePattern({ cmd: 'createHospitalAppointment' })
     async createHospitalAppointment(@Payload() payload: CreateHospitalAppointmentDto) {
         try {
             const res = await this.hospitalAppointmentService.createHospitalAppointment(payload);
@@ -23,7 +23,7 @@ export class HospitalAppointmentController {
         }
     }
 
-    @EventPattern('getHospitalAppointmentById')
+    @MessagePattern({ cmd: 'getHospitalAppointmentById' })
     async getHospitalAppointmentById(@Payload() id: string) {
         try {
             const res = await this.hospitalAppointmentService.getHospitalAppointmentById(id);
@@ -34,7 +34,7 @@ export class HospitalAppointmentController {
         }
     }
 
-    @EventPattern('getAllHospitalAppointment')
+    @MessagePattern({ cmd: 'getAllHospitalAppointment' })
     async getAllHospitalAppointment(@Payload() payload: GetAllHospitalAppointmentDto) {
         try {
             const res = await this.hospitalAppointmentService.getAllHospitalAppointment(payload);
@@ -45,7 +45,7 @@ export class HospitalAppointmentController {
         }
     }
 
-    @EventPattern('updateHospitalAppointment')
+    @MessagePattern({ cmd: 'updateHospitalAppointment' })
     async updateHospitalAppointment(@Payload() payload: { id: string, data: UpdateHospitalAppointmentDto }) {
         try {
             const { id, data } = payload;
@@ -57,7 +57,7 @@ export class HospitalAppointmentController {
         }
     }
 
-    @EventPattern('deleteHospitalAppointment')
+    @MessagePattern({ cmd: 'deleteHospitalAppointment' })
     async deleteHospitalAppointment(@Payload() id: string) {
         try {
             const res = await this.hospitalAppointmentService.deleteHospitalAppointment(id);
