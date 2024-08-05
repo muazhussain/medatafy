@@ -14,26 +14,26 @@ export class MedicalReportController {
 
     @Post()
     createMedicalReport(@Body() payload: CreateMedicalReportDto) {
-        this.natsClient.emit('createMedicalReport', payload);
+        return this.natsClient.send({ cmd: 'createMedicalReport' }, payload);
     }
 
     @Get(':id')
     getMedicalReportById(@Param('id') id: string) {
-        this.natsClient.emit('getMedicalReportById', id);
+        return this.natsClient.send({ cmd: 'getMedicalReportById' }, id);
     }
 
     @Get()
     getAllMedicalReport(@Query() payload: GetAllMedicalReportDto) {
-        this.natsClient.emit('getAllMedicalReport', payload);
+        return this.natsClient.send({ cmd: 'getAllMedicalReport' }, payload);
     }
 
     @Patch(':id')
-    updateMedicalReport(@Param('id') id: string, @Body() payload: UpdateMedicalReportDto) {
-        this.natsClient.emit('updateMedicalReport', { id, payload });
+    updateMedicalReport(@Param('id') id: string, @Body() data: UpdateMedicalReportDto) {
+        return this.natsClient.send({ cmd: 'getAllMedicalReport' }, { id, data });
     }
-
+    
     @Delete(':id')
     deleteMedicalReport(@Param('id') id: string) {
-        this.natsClient.emit('deleteMedicalReport', id);
+        return this.natsClient.send({ cmd: 'deleteMedicalReport' }, id);
     }
 }

@@ -9,7 +9,6 @@ export class UpdateMedicalReportDto {
         description: 'Issue date of medical report',
         example: '01-01-2022',
         format: 'DD-MM-YYYY',
-        default: '01-01-2022',
     })
     @IsDate()
     @IsOptional()
@@ -22,7 +21,6 @@ export class UpdateMedicalReportDto {
         description: 'Delivery date of medical report',
         example: '01-01-2022',
         format: 'DD-MM-YYYY',
-        default: '01-01-2022',
     })
     @IsDate()
     @IsOptional()
@@ -34,7 +32,6 @@ export class UpdateMedicalReportDto {
         nullable: true,
         description: 'Report content of medical report',
         example: 'Report content',
-        default: 'Report content',
     })
     @IsString()
     @IsNotEmpty()
@@ -47,7 +44,6 @@ export class UpdateMedicalReportDto {
         nullable: true,
         description: 'Summary of medical report',
         example: 'Summary',
-        default: 'Summary',
     })
     @IsString()
     @IsNotEmpty()
@@ -60,7 +56,6 @@ export class UpdateMedicalReportDto {
         nullable: true,
         description: 'Medical test id',
         example: '11111111-1111-1111-1111-111111111111',
-        default: '11111111-1111-1111-1111-111111111111',
     })
     @IsUUID()
     @IsOptional()
@@ -72,7 +67,6 @@ export class UpdateMedicalReportDto {
         nullable: true,
         description: 'Doctor id',
         example: '11111111-1111-1111-1111-111111111111',
-        default: '11111111-1111-1111-1111-111111111111',
     })
     @IsUUID()
     @IsOptional()
@@ -84,7 +78,6 @@ export class UpdateMedicalReportDto {
         nullable: true,
         description: 'Hospital id',
         example: '11111111-1111-1111-1111-111111111111',
-        default: '11111111-1111-1111-1111-111111111111',
     })
     @IsUUID()
     @IsOptional()

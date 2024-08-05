@@ -8,7 +8,6 @@ export class CreateMedicalReportDto {
         description: 'Issue date of medical report',
         example: '01-01-2022',
         format: 'DD-MM-YYYY',
-        default: '01-01-2022',
     })
     @IsString()
     @IsNotEmpty()
@@ -20,7 +19,6 @@ export class CreateMedicalReportDto {
         description: 'Delivery date of medical report',
         example: '01-01-2022',
         format: 'DD-MM-YYYY',
-        default: '01-01-2022',
     })
     @IsString()
     @IsOptional()
@@ -32,7 +30,6 @@ export class CreateMedicalReportDto {
         nullable: true,
         description: 'Medical report content',
         example: 'Some medical report content',
-        default: 'Some medical report content',
     })
     @IsString()
     @IsOptional()
@@ -44,7 +41,6 @@ export class CreateMedicalReportDto {
         nullable: true,
         description: 'Medical report summary',
         example: 'Some medical report summary',
-        default: 'Some medical report summary',
     })
     @IsString()
     @IsOptional()
@@ -55,7 +51,6 @@ export class CreateMedicalReportDto {
         required: true,
         description: 'Medical test id',
         example: '11111111-1111-1111-1111-111111111111',
-        default: '11111111-1111-1111-1111-111111111111',
     })
     @IsUUID()
     medicalTest: string;
@@ -65,7 +60,6 @@ export class CreateMedicalReportDto {
         required: true,
         description: 'Patient id',
         example: '11111111-1111-1111-1111-111111111111',
-        default: '11111111-1111-1111-1111-111111111111',
     })
     @IsUUID()
     patient: string;
@@ -76,7 +70,6 @@ export class CreateMedicalReportDto {
         nullable: true,
         description: 'Doctor id',
         example: '11111111-1111-1111-1111-111111111111',
-        default: '11111111-1111-1111-1111-111111111111',
     })
     @IsUUID()
     @IsOptional()
@@ -88,7 +81,6 @@ export class CreateMedicalReportDto {
         nullable: true,
         description: 'Hospital id',
         example: '11111111-1111-1111-1111-111111111111',
-        default: '11111111-1111-1111-1111-111111111111',
     })
     @IsUUID()
     @IsOptional()

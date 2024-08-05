@@ -28,7 +28,6 @@ export class GetAllMedicalReportDto {
         nullable: true,
         description: 'UUID of medical tests',
         example: ['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001'],
-        default: ['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001'],
     })
     @ValidateNested({ each: true })
     @IsArray()
@@ -42,7 +41,6 @@ export class GetAllMedicalReportDto {
         nullable: true,
         description: 'UUID of patients',
         example: ['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001'],
-        default: ['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001'],
     })
     @ValidateNested({ each: true })
     @IsArray()
@@ -56,7 +54,6 @@ export class GetAllMedicalReportDto {
         nullable: true,
         description: 'UUID of doctors',
         example: ['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001'],
-        default: ['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001'],
     })
     @ValidateNested({ each: true })
     @IsArray()
@@ -70,7 +67,6 @@ export class GetAllMedicalReportDto {
         nullable: true,
         description: 'UUID of hospitals',
         example: ['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001'],
-        default: ['123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174001'],
     })
     @ValidateNested({ each: true })
     @IsArray()
