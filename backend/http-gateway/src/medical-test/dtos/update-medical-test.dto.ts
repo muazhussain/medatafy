@@ -14,7 +14,6 @@ export class UpdateMedicalTestDto {
         nullable: true,
         description: 'Test name',
         example: 'Blood test',
-        default: 'Blood test',
     })
     @IsString()
     @IsNotEmpty()
@@ -40,7 +39,6 @@ export class UpdateMedicalTestDto {
         nullable: true,
         description: 'Test cost',
         example: 100,
-        default: 100,
     })
     @IsNumber()
     @IsNotEmpty()

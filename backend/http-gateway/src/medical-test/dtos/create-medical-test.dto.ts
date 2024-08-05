@@ -13,7 +13,6 @@ export class CreateMedicalTestDto {
         required: true,
         description: 'Test name',
         example: 'Blood test',
-        default: 'Blood test',
     })
     @IsString()
     @IsNotEmpty()
@@ -35,7 +34,6 @@ export class CreateMedicalTestDto {
         required: true,
         description: 'Test cost',
         example: 1000,
-        default: 1000,
     })
     @IsNumber()
     @IsNotEmpty()
@@ -46,7 +44,6 @@ export class CreateMedicalTestDto {
         required: true,
         description: 'Hospital ID',
         example: '123e4567-e89b-12d3-a456-426614174000',
-        default: '123e4567-e89b-12d3-a456-426614174000',
     })
     @IsUUID()
     hospital: string;

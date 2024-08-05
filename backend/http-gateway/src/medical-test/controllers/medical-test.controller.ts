@@ -14,26 +14,26 @@ export class MedicalTestController {
 
     @Post()
     createMedicalTest(@Body() payload: CreateMedicalTestDto) {
-        this.natsClient.emit('createMedicalTest', payload);
+        return this.natsClient.send({ cmd: 'createMedicalTest' }, payload);
     }
 
     @Get(':id')
     getMedicalTestById(@Param('id') id: string) {
-        this.natsClient.emit('getMedicalTestById', id);
+        return this.natsClient.send({ cmd: 'getMedicalTestById' }, id);
     }
 
     @Get()
     getAllMedicalTest(@Query() payload: GetAllMedicalTestDto) {
-        this.natsClient.emit('getAllMedicalTest', payload);
+        this.natsClient.send({ cmd: 'getAllMedicalTest' }, payload);
     }
 
     @Patch(':id')
     updateMedicalTest(@Param('id') id: string, @Body() payload: UpdateMedicalTestDto) {
-        this.natsClient.emit('updateMedicalTest', { id, payload });
+        this.natsClient.send({ cmd: 'updateMedicalTest' }, { id, payload });
     }
 
     @Delete(':id')
     deleteMedicalTest(@Param('id') id: string) {
-        this.natsClient.emit('deleteMedicalTest', id);
+        this.natsClient.send({ cmd: 'deleteMedicalTest' }, id);
     }
 }

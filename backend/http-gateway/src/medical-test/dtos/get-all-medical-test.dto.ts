@@ -33,7 +33,6 @@ export class GetAllMedicalTestDto {
         required: false,
         description: 'Search by test types',
         example: ['lab', 'imaging'],
-        default: ['lab', 'imaging'],
     })
     @ValidateNested({ each: true })
     @IsArray()
@@ -47,7 +46,6 @@ export class GetAllMedicalTestDto {
         required: false,
         description: 'Hospitals ids',
         example: ['a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12'],
-        default: ['a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12'],
     })
     @ValidateNested({ each: true })
     @IsArray()
