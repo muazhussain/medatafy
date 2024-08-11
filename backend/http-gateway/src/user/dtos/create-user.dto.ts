@@ -247,6 +247,18 @@ class PatientDto {
     address: string;
 }
 
+class MedatafyAdminDto {
+    @ApiProperty({
+        type: 'string',
+        required: true,
+        description: 'Name of the medatafy admin',
+        example: 'John Doe',
+    })
+    @IsString()
+    @IsNotEmpty()
+    name: string;
+}
+
 export class CreateUserDto {
     @ApiProperty({
         type: 'string',
@@ -273,7 +285,7 @@ export class CreateUserDto {
         enum: UserType,
         required: true,
         description: 'Type of the user',
-        example: 'admin',
+        example: 'medatafy_admin',
     })
     @IsEnum(UserType, { message: 'Invalid user type' })
     userType: UserType;
@@ -304,4 +316,13 @@ export class CreateUserDto {
     @ValidateNested()
     @IsOptional()
     patient?: PatientDto;
+
+    @ApiProperty({
+        required: false,
+        type: MedatafyAdminDto,
+        example: MedatafyAdminDto,
+    })
+    @ValidateNested()
+    @IsOptional()
+    medatafyAdmin?: MedatafyAdminDto;
 }

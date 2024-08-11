@@ -1,5 +1,5 @@
 import { CommonEntity } from "src/utils/common.entity";
-import { HospitalEntity } from "src/other-entities/hospital.entity";
+import { HospitalEntity } from "src/other-entities/entities/hospital.entity";
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { MedicalTestEntity } from "./medical-test.entity";
 import { PatientEntity } from "./patient.entity";

@@ -3,8 +3,8 @@ import { PrescriptionMicroserviceController } from './controllers/prescription-m
 import { PrescriptionService } from './services/prescription.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PrescriptionEntity } from './entities/prescription.entity';
-import { MedicinePrescriptionRelationEntity } from 'src/other-entities/medicine-prescription-relation.entity';
-import { MedicalTestPrescriptionRelationEntity } from 'src/other-entities/medical-test-prescription-relation.entity';
+import { MedicinePrescriptionRelationEntity } from 'src/other-entities/entities/medicine-prescription-relation.entity';
+import { MedicalTestPrescriptionRelationEntity } from 'src/other-entities/entities/medical-test-prescription-relation.entity';
 
 @Module({
   imports: [

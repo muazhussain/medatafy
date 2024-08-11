@@ -1,8 +1,9 @@
-import { HospitalEntity } from "src/hospital/entities/hospital.entity";
+import { DoctorEntity } from "src/doctor/entities/doctor.entity";
 import { CommonEntity } from "src/utils/common.entity";
 import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
-import { DoctorEntity } from "./doctor.entity";
 import { PatientEntity } from "./patient.entity";
+import { HospitalEntity } from "./hospital.entity";
+import { MedatafyAdminEntity } from "./medatafy-admin.entity";
 
 export enum UserType {
     MEDATAFY_ADMIN = 'medatafy_admin',
@@ -67,4 +68,8 @@ export class UserEntity extends CommonEntity {
     @OneToOne(() => PatientEntity, (patient) => patient.user,)
     @JoinColumn({ name: 'patient_id' })
     patient?: PatientEntity;
+
+    @OneToOne(() => MedatafyAdminEntity, (medatafyAdmin) => medatafyAdmin.user,)
+    @JoinColumn({ name: 'medatafy_admin_id' })
+    medatafyAdmin?: MedatafyAdminEntity;
 }

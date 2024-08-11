@@ -1,11 +1,13 @@
-import { Body, Controller, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Patch, Query, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { GetAllDoctorDto } from '../dtos/get-all-doctor.dto';
 import { UpdateDoctorDto } from '../dtos/update-doctor.dto';
+import { JwtGuard } from 'src/user/guards/jwt.guard';
 
 @ApiTags('Doctor')
 @Controller('doctor')
+// @UseGuards(JwtGuard)
 export class DoctorController {
     constructor(
         @Inject('NATS_SERVICE') private natsClient: ClientProxy,

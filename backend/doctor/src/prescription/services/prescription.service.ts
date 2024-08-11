@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, In, Repository } from 'typeorm';
-import { MedicinePrescriptionRelationEntity } from 'src/other-entities/medicine-prescription-relation.entity';
-import { MedicalTestPrescriptionRelationEntity } from 'src/other-entities/medical-test-prescription-relation.entity';
+import { MedicinePrescriptionRelationEntity } from 'src/other-entities/entities/medicine-prescription-relation.entity';
+import { MedicalTestPrescriptionRelationEntity } from 'src/other-entities/entities/medical-test-prescription-relation.entity';
 import { CreatePrescriptionDto } from '../dtos/create-prescription.dto';
 import AppDataSource from 'src/data-source';
 import { PrescriptionEntity } from '../entities/prescription.entity';

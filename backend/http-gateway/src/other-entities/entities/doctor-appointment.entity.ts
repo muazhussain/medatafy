@@ -1,7 +1,7 @@
-import { PatientEntity } from "src/other-entities/patient.entity";
 import { CommonEntity } from "src/utils/common.entity";
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { DoctorEntity } from "./doctor.entity";
+import { PatientEntity } from "./patient.entity";
 
 enum DoctorAppointmentStatus {
     PENDING = 'pending',

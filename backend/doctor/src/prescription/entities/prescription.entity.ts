@@ -1,9 +1,9 @@
 import { CommonEntity } from "src/utils/common.entity";
-import { MedicinePrescriptionRelationEntity } from "src/other-entities/medicine-prescription-relation.entity";
+import { MedicinePrescriptionRelationEntity } from "src/other-entities/entities/medicine-prescription-relation.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { DoctorEntity } from "src/doctor/entities/doctor.entity";
-import { PatientEntity } from "src/other-entities/patient.entity";
-import { MedicalTestPrescriptionRelationEntity } from "src/other-entities/medical-test-prescription-relation.entity";
+import { PatientEntity } from "src/other-entities/entities/patient.entity";
+import { MedicalTestPrescriptionRelationEntity } from "src/other-entities/entities/medical-test-prescription-relation.entity";
 
 @Entity('prescription')
 export class PrescriptionEntity extends CommonEntity {

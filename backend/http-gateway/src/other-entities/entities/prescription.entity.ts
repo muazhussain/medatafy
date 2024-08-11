@@ -1,9 +1,9 @@
 import { CommonEntity } from "src/utils/common.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
-import { PatientEntity } from "src/other-entities/patient.entity";
 import { DoctorEntity } from "./doctor.entity";
 import { MedicinePrescriptionRelationEntity } from "./medicine-prescription-relation.entity";
 import { MedicalTestPrescriptionRelationEntity } from "./medical-test-prescription-relation.entity";
+import { PatientEntity } from "./patient.entity";
 
 @Entity('prescription')
 export class PrescriptionEntity extends CommonEntity {

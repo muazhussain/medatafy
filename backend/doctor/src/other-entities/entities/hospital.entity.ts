@@ -1,9 +1,9 @@
 import { Column, Entity, OneToMany, OneToOne } from "typeorm";
 import { MedicalReportEntity } from "./medical-report.entity";
-import { HospitalAppointmentEntity } from "./hospital-appointment.entity";
 import { MedicalTestEntity } from "./medical-test.entity";
 import { UserEntity } from "./user.entity";
 import { CommonEntity } from "src/utils/common.entity";
+import { HospitalAppointmentEntity } from "./hospital-appointment.entity";
 @Entity('hospital')
 export class HospitalEntity extends CommonEntity {
     @Column()

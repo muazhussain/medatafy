@@ -2,9 +2,9 @@ import { CommonEntity } from "src/utils/common.entity";
 import { DoctorAppointmentEntity } from "src/doctor-appointment/entities/doctor-appointment.entity";
 import { HospitalAppointmentEntity } from "src/hospital-appointment/entities/hospital-appointment.entity";
 import { MedicalReportEntity } from "src/medical-report/entities/medical-report.entity";
-import { UserEntity } from "src/other-entities/user.entity";
 import { PrescriptionEntity } from "src/prescription/entities/prescription.entity";
 import { Column, Entity, OneToMany, OneToOne } from "typeorm";
+import { UserEntity } from "src/other-entities/entities/user.entity";
 
 enum Gender {
     MALE = 'male',

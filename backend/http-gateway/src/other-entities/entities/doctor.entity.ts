@@ -1,9 +1,9 @@
+import { UserEntity } from "src/user/entities/user.entity";
 import { CommonEntity } from "src/utils/common.entity";
-import { Entity, Column, OneToOne, OneToMany } from "typeorm";
-import { UserEntity } from "./user.entity";
-import { MedicalReportEntity } from "./medical-report.entity";
-import { PrescriptionEntity } from "./prescription.entity";
+import { Column, Entity, OneToMany, OneToOne } from "typeorm";
 import { DoctorAppointmentEntity } from "./doctor-appointment.entity";
+import { PrescriptionEntity } from "./prescription.entity";
+import { MedicalReportEntity } from "./medical-report.entity";
 
 enum Gender {
     MALE = 'male',

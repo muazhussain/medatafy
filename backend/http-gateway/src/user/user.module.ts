@@ -14,14 +14,16 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RefreshStrategy } from './strategies/refresh.strategy';
-import { DoctorEntity } from 'src/other-entities/doctor.entity';
-import { PatientEntity } from 'src/other-entities/patient.entity';
-import { HospitalEntity } from 'src/other-entities/hostpital.entity';
+import { DoctorEntity } from 'src/other-entities/entities/doctor.entity';
+import { HospitalEntity } from 'src/other-entities/entities/hostpital.entity';
+import { MedatafyAdminEntity } from 'src/other-entities/entities/medatafy-admin.entity';
+import { PatientEntity } from 'src/other-entities/entities/patient.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       UserEntity,
+      MedatafyAdminEntity,
       DoctorEntity,
       HospitalEntity,
       PatientEntity,

@@ -84,6 +84,14 @@ class Patient {
     address: string;
 }
 
+class MedatafyAdmin {
+    @Expose()
+    id: string;
+
+    @Expose()
+    name: string;
+}
+
 export class UserDto {
     @Expose()
     id: string;
@@ -101,9 +109,6 @@ export class UserDto {
     accountType: string;
 
     @Expose()
-    mongoRef?: string;
-
-    @Expose()
     @Type(() => Doctor,)
     doctor?: Doctor;
 
@@ -114,4 +119,8 @@ export class UserDto {
     @Expose()
     @Type(() => Patient,)
     patient?: Patient;
+
+    @Expose()
+    @Type(() => MedatafyAdmin,)
+    medatafyAdmin?: MedatafyAdmin;
 }

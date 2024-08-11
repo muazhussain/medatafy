@@ -1,9 +1,9 @@
 import { CommonEntity } from "src/utils/common.entity";
-import { DoctorEntity } from "src/other-entities/doctor.entity";
-import { MedicalTestEntity } from "src/other-entities/medical-test.entity";
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { HospitalEntity } from "src/hospital/entities/hospital.entity";
-import { PatientEntity } from "src/other-entities/patient.entity";
+import { MedicalTestEntity } from "src/medical-test/entities/medical-test.entity";
+import { DoctorEntity } from "src/other-entities/entities/doctor.entity";
+import { PatientEntity } from "src/other-entities/entities/patient.entity";
 
 @Entity('medical_report')
 export class MedicalReportEntity extends CommonEntity {

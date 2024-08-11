@@ -1,6 +1,6 @@
 import { HospitalEntity } from "src/hospital/entities/hospital.entity";
-import { MedicalReportEntity } from "src/other-entities/medical-report.entity";
-import { MedicalTestPrescriptionRelationEntity } from "src/other-entities/medical-test-prescription-relation.entity";
+import { MedicalReportEntity } from "src/medical-report/entities/medical-report.entity";
+import { MedicalTestPrescriptionRelationEntity } from "src/other-entities/entities/medical-test-prescription-relation.entity";
 import { CommonEntity } from "src/utils/common.entity";
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 

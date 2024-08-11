@@ -19,9 +19,10 @@ import * as crypto from 'crypto';
 import { VerifyTokenDto } from '../dtos/verify-token.dto';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import AppDataSource from 'src/data-source';
-import { DoctorEntity } from 'src/other-entities/doctor.entity';
-import { HospitalEntity } from 'src/other-entities/hostpital.entity';
-import { PatientEntity } from 'src/other-entities/patient.entity';
+import { DoctorEntity } from 'src/other-entities/entities/doctor.entity';
+import { HospitalEntity } from 'src/other-entities/entities/hostpital.entity';
+import { MedatafyAdminEntity } from 'src/other-entities/entities/medatafy-admin.entity';
+import { PatientEntity } from 'src/other-entities/entities/patient.entity';
 
 @Injectable()
 export class UserService {
@@ -30,6 +31,7 @@ export class UserService {
         @InjectRepository(DoctorEntity) private readonly doctorRepository: Repository<DoctorEntity>,
         @InjectRepository(HospitalEntity) private readonly hospitalRepository: Repository<HospitalEntity>,
         @InjectRepository(PatientEntity) private readonly patientRepository: Repository<PatientEntity>,
+        @InjectRepository(MedatafyAdminEntity) private readonly medatafyAdminRepository: Repository<MedatafyAdminEntity>,
         @InjectModel(User.name) private readonly userModel: Model<User>,
         @InjectRedis() private readonly redisService: Redis,
         private readonly jwtService: JwtService,
@@ -47,6 +49,10 @@ export class UserService {
             });
             if (findUser) {
                 throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
+            }
+
+            if (payload.userType === 'medatafy_admin' && payload.medatafyAdmin === null) {
+                throw new HttpException('Admin information is required', HttpStatus.BAD_REQUEST);
             }
 
             if (payload.userType === 'doctor' && payload.doctor === null) {
@@ -83,7 +89,14 @@ export class UserService {
             });
             const createdUser = await queryrunner.manager.save(this.userRepository.metadata.target, user);
 
-            if (payload.userType === 'doctor') {
+            if (payload.userType === 'medatafy_admin') {
+                const medatafyAdmin = this.medatafyAdminRepository.create({
+                    name: payload.medatafyAdmin.name,
+                    user: createdUser,
+                });
+                await queryrunner.manager.save(this.medatafyAdminRepository.metadata.target, medatafyAdmin);
+            }
+            else if (payload.userType === 'doctor') {
                 const findUser = await this.doctorRepository.findOneBy({ phone: payload.doctor.phone });
                 if (findUser) {
                     throw new HttpException('Phone number already exists', HttpStatus.BAD_REQUEST);
@@ -143,6 +156,7 @@ export class UserService {
                     doctor: payload.userType === 'doctor' ? true : false,
                     patient: payload.userType === 'patient' ? true : false,
                     hospital: payload.userType === 'hospital' ? true : false,
+                    medatafyAdmin: payload.userType === 'medatafy_admin' ? true : false,
                 },
             });
             return plainToClass(UserDto, data, { excludeExtraneousValues: true });
@@ -268,7 +282,18 @@ export class UserService {
             if (!isMatch) {
                 throw new HttpException('Invalid credentials', HttpStatus.BAD_REQUEST);
             }
-            return plainToClass(UserDto, findUser, { excludeExtraneousValues: true });
+            const user = await this.userRepository.findOne({
+                where: {
+                    email: email
+                },
+                relations: {
+                    doctor: true,
+                    hospital: true,
+                    patient: true,
+                    medatafyAdmin: true,
+                },
+            });
+            return plainToClass(UserDto, user, { excludeExtraneousValues: true });
         } catch (error) {
             throw error;
         }
@@ -278,8 +303,7 @@ export class UserService {
         try {
             const accessToken = this.jwtService.sign(
                 {
-                    userId: req.user._id.toString(),
-                    email: req.user.email,
+                    user: req.user.id,
                     userAgent: req.headers['user-agent'],
                     tokenType: 'access',
                 },
@@ -289,8 +313,7 @@ export class UserService {
             );
             const refreshToken = this.jwtService.sign(
                 {
-                    userId: req.user._id.toString(),
-                    email: req.user.email,
+                    user: req.user.id,
                     userAgent: req.headers['user-agent'],
                     tokenType: 'refresh',
                 },
@@ -299,9 +322,11 @@ export class UserService {
                 },
             );
             await this.redisService.set(req.user._id, refreshToken, 'EX', 60 * 60 * 24 * 3);
+
+            const user = this.removeNullValues(req.user);
+
             return {
-                userId: req.user._id.toString(),
-                email: req.user.email,
+                user: user,
                 accessToken: accessToken,
                 refreshToken: refreshToken,
             };
@@ -439,5 +464,14 @@ export class UserService {
 
         const uniqueId = `${userPrefix[userType]}${timestamp}${randomSuffix1}${randomSuffix2}${lastChar}${secondLastChar}`;
         return uniqueId;
+    }
+
+    private removeNullValues(obj: Record<string, any>): Record<string, any> {
+        return Object.keys(obj)
+            .filter((key) => obj[key] !== null)
+            .reduce((acc, key) => {
+                acc[key] = obj[key];
+                return acc;
+            }, {} as Record<string, any>);
     }
 }

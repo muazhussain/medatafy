@@ -1,6 +1,6 @@
 import { DoctorAppointmentEntity } from "src/doctor-appointment/entities/doctor-appointment.entity";
-import { MedicalReportEntity } from "src/other-entities/medical-report.entity";
-import { UserEntity } from "src/other-entities/user.entity";
+import { MedicalReportEntity } from "src/other-entities/entities/medical-report.entity";
+import { UserEntity } from "src/other-entities/entities/user.entity";
 import { PrescriptionEntity } from "src/prescription/entities/prescription.entity";
 import { CommonEntity } from "src/utils/common.entity";
 import { Column, Entity, OneToMany, OneToOne } from "typeorm";
