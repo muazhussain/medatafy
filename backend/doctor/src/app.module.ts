@@ -3,13 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DoctorAppointmentModule } from './doctor-appointment/doctor-appointment.module';
 import { DoctorModule } from './doctor/doctor.module';
 import { PrescriptionModule } from './prescription/prescription.module';
-import { HospitalAppointmentEntity } from './other-entities/hospital-appointment.entity';
-import { HospitalEntity } from './other-entities/hospital.entity';
-import { MedicalReportEntity } from './other-entities/medical-report.entity';
-import { MedicalTestEntity } from './other-entities/medical-test.entity';
-import { MedicineEntity } from './other-entities/medicine.entity';
-import { PatientEntity } from './other-entities/patient.entity';
-import { UserEntity } from './other-entities/user.entity';
+import { HospitalAppointmentEntity } from './other-entities/entities/hospital-appointment.entity';
+import { HospitalEntity } from './other-entities/entities/hospital.entity';
+import { MedicalReportEntity } from './other-entities/entities/medical-report.entity';
+import { MedicalTestEntity } from './other-entities/entities/medical-test.entity';
+import { MedicineEntity } from './other-entities/entities/medicine.entity';
+import { PatientEntity } from './other-entities/entities/patient.entity';
+import { UserEntity } from './other-entities/entities/user.entity';
+import { MedatafyAdminEntity } from './other-entities/entities/medatafy-admin.entity';
 
 @Module({
   imports: [
@@ -23,19 +24,24 @@ import { UserEntity } from './other-entities/user.entity';
     //   autoLoadEntities: true,
     //   synchronize: true,
     // }),
+
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.POSTGRES_HOST,
-      port: parseInt(process.env.POSTGRES_PORT, 10),
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DB,
-      autoLoadEntities: true,
-      synchronize: process.env.SYNCHRONIZE === 'true',
+      host: process.env.TYPEORM_HOST,
+      port: parseInt(process.env.TYPEORM_PORT, 10),
+      username: process.env.TYPEORM_USERNAME,
+      password: process.env.TYPEORM_PASSWORD,
+      database: process.env.TYPEORM_DATABASE,
+      entities: [process.env.TYPEORM_ENTITIES],
+      synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true',
+      autoLoadEntities: process.env.TYPEORM_AUTOLOADENTITIES === 'true',
+      logging: process.env.TYPEORM_LOGGING === 'true',
     }),
+
     TypeOrmModule.forFeature([
       HospitalAppointmentEntity,
       HospitalEntity,
+      MedatafyAdminEntity,
       MedicalReportEntity,
       MedicalTestEntity,
       MedicineEntity,

@@ -13,13 +13,13 @@ import { DataSource } from "typeorm";
 
 const AppDataSource = new DataSource({
     type: 'postgres',
-    host: process.env.POSTGRES_HOST,
-    port: parseInt(process.env.POSTGRES_PORT, 10),
-    username: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    database: process.env.POSTGRES_DB,
-    entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    synchronize: process.env.SYNCHRONIZE === 'true',
+    host: process.env.TYPEORM_HOST,
+    port: parseInt(process.env.TYPEORM_PORT, 10),
+    username: process.env.TYPEORM_USERNAME,
+    password: process.env.TYPEORM_PASSWORD,
+    database: process.env.TYPEORM_DATABASE,
+    entities: [process.env.TYPEORM_ENTITIES],
+    synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true',
 });
 
 export default AppDataSource;
