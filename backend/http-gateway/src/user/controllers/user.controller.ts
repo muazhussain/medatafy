@@ -37,6 +37,8 @@ export class UserController {
         }
     }
 
+    @UseGuards(JwtGuard)
+    @ApiBearerAuth()
     @Patch(':id')
     async updateUser(@Param('id') id: string, @Body() payload: UpdateUserDto) {
         try {
@@ -48,6 +50,8 @@ export class UserController {
         }
     }
 
+    @UseGuards(JwtGuard)
+    @ApiBearerAuth()
     @Delete(':id')
     async deleteUser(@Param('id') id: string) {
         try {

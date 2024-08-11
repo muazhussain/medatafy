@@ -1,12 +1,15 @@
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateDoctorAppointmentDto } from '../dtos/create-doctor-appointment.dto';
 import { GetAllDoctorAppointmentDto } from '../dtos/get-all-doctor-appointment.dto';
 import { UpdateDoctorAppointmentDto } from '../dtos/update-doctor-appointment.dto';
+import { JwtGuard } from 'src/user/guards/jwt.guard';
 
 @ApiTags('Doctor Appointment')
 @Controller('doctor-appointment')
+@UseGuards(JwtGuard)
+@ApiBearerAuth()
 export class DoctorAppointmentController {
     constructor(
         @Inject('NATS_SERVICE') private readonly natsClient: ClientProxy,
