@@ -10,6 +10,8 @@ MEDATAFY is a comprehensive backend system designed to manage medical records, h
   - [Doctor Service](#doctor-service)
   - [Hospital Service](#hospital-service)
 - [Technologies](#technologies)
+- [Build and run the application](#build-and-run-the-application)
+- [Usage](#usage)
 
 
 ## Microservices
@@ -36,3 +38,13 @@ The Hospital Service handles medical tests, hospital appointments, and other rel
 - **Primary Database:** PostgreSQL
 - **Caching for Authentication:** MongoDB
 - **Caching for OTP and Temporary Data:** Redis
+
+## Build and run the application
+
+`docker-compose up --build`
+
+## Usage
+
+- The API server will be running at `http://localhost:3000`.
+
+- Swagger documentation is available at `http://localhost:3000/docs` with basic auth `(medatafy_api / 123456)`.
